@@ -1,4 +1,4 @@
-from Functions.Functions import Functions
+from SystemsArchitectureFITProject.Functions.Functions import Functions
 
 # Create an instance of the Functions class
 functions = Functions()

@@ -1,6 +1,6 @@
 from scipy.optimize import bisect
 
-class FunctionsForFunctions:
+class FunctionsFor21_85:
     
     # Compute the value of phi based on the formula:
     # phi(rho, theta) = sum(a_i * Z_i(rho, theta)) for each valid a_i.
@@ -33,7 +33,7 @@ class FunctionsForFunctions:
         Solve for the missing rho using the bisection method.
         """
         def func(rho_guess):
-            return FunctionsForFunctions.computePhi(rho_guess, theta, a, Z) - phi
+            return FunctionsFor21_85.computePhi(rho_guess, theta, a, Z) - phi
         
         # Bisection method to find root of func(rho) = 0
         return bisect(func, 0.001, 100.0, xtol=1e-6)
@@ -52,7 +52,7 @@ class FunctionsForFunctions:
         Solve for the missing theta using the bisection method.
         """
         def func(thetaGuess):
-            return FunctionsForFunctions.computePhi(rho, thetaGuess, a, Z) - phi
+            return FunctionsFor21_85.computePhi(rho, thetaGuess, a, Z) - phi
         
         # Bisection method to find root of func(theta) = 0
         return bisect(func, 0.001, 100.0, xtol=1e-6)

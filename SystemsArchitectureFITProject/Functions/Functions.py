@@ -1,4 +1,4 @@
-from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsForFunctions
+from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_85
 
 class Functions:
     
@@ -72,25 +72,25 @@ class Functions:
         if phi is None:
             if a is None or rho is None or theta is None or Z is None:
                 raise ValueError("Need a, rho, theta, and Z to compute phi")
-            return FunctionsForFunctions.computePhi(rho, theta, a, Z)
+            return FunctionsFor21_85.computePhi(rho, theta, a, Z)
 
         # Handle missing `a_i`
         if a is not None and any(a_i is None for a_i in a):
             if phi is None or rho is None or theta is None or Z is None:
                 raise ValueError("Need phi, rho, theta, and Z to solve for a_i")
-            return FunctionsForFunctions.solveForA(phi, rho, theta, Z, a)
+            return FunctionsFor21_85.solveForA(phi, rho, theta, Z, a)
 
         # Handle missing `rho`
         if rho is None:
             if phi is None or a is None or theta is None or Z is None:
                 raise ValueError("Need phi, a, theta, and Z to solve for rho")
-            return FunctionsForFunctions.solveForRho(phi, a, theta, Z)
+            return FunctionsFor21_85.solveForRho(phi, a, theta, Z)
         
         # Handle missing `theta`
         if theta is None:
             if phi is None or a is None or rho is None or Z is None:
                 raise ValueError("Need phi, a, rho, and Z to solve for theta")
-            return FunctionsForFunctions.solveForTheta(phi, a, rho, Z)
+            return FunctionsFor21_85.solveForTheta(phi, a, rho, Z)
 
         # If everything is provided, return phi
         return phi

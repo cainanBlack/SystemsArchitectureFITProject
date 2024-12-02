@@ -1,3 +1,3 @@
-> Need scipy
-> run this in your cmd:
-> python -m pip install scipy
+> Need scipy <br />
+> run this in your cmd: <br />
+> python -m pip install scipy <br />

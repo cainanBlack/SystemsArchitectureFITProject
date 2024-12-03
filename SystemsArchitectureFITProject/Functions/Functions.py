@@ -1,4 +1,5 @@
 from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_85
+from pickle import NONE
 
 class Functions:
     
@@ -50,6 +51,60 @@ class Functions:
         
         else:
             raise ValueError("One variable must be missing to solve for it.")
+        
+    @staticmethod 
+    def function21_38(delta_x=None, delta_y=None, lambda_=None, z=None, d_x=None, d_y=None):
+        
+        if delta_x is None and delta_y is None:
+            if lambda_ is not None and z is not None and d_x is not None and d_y is not None:
+                delta_x = (lambda_ * z) / d_x
+                delta_y = (lambda_ * z) / d_y
+                return delta_x, delta_y
+            else:
+                raise ValueError("You must provide lambda, z, and d_x to solve for delta_y and lambda, z, and d_y to solve for delta_y")
+            
+        if  lambda_ is None and delta_x is not None:
+            if z is not None and d_x is not None:
+                lambda_ = (delta_x * d_x) / z
+                return lambda_
+            else:
+                raise ValueError("You must provide delta_x, d_x, and z to solve for lambda")
+            
+        if lambda_ is None and delta_y is not None:
+            if z is not None and d_y is not None:
+                lambda_ = (delta_y * d_y) / z
+                return lambda_
+            else:
+                raise ValueError("You must provide delta_y, d_y, and z to solve for lambda")
+            
+        if z is None and delta_x is not None:
+            if lambda_ is not None and d_x is not None:
+                z = (delta_x * d_x) / lambda_
+                return z
+            else:
+                raise ValueError("You must provide delta_x, d_x, and lambda to solve for z")
+            
+        if z is None and delta_y is not None:
+            if lambda_ is not None and d_x is not None:
+                z = (delta_y * d_y) / lambda_
+                return z
+            else:
+                raise ValueError("You must provide delta_y, d_y, and lambda to solve for z")
+        
+        if d_x is None:
+            if z is not None and lambda_ is not None and delta_x is not None:
+                d_x = (lambda_ * z) / delta_x
+                return d_x
+            else:
+                raise ValueError("You must provide lambda, z, and delta_x to solve for d_x")
+        
+        if d_y is None:
+            if z is not None and lambda_ is not None and delta_x is not None:
+                d_y = (lambda_ * z) / delta_y
+                return d_y
+            else:
+                raise ValueError("You must provide lambda, z, and delta_y to solve for d_y")
+            
         
     # Solves for any missing variable: phi, a_i, rho, or theta.
     # Depending on which variable is missing, it either computes the missing value 

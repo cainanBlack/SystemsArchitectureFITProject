@@ -1,4 +1,5 @@
 from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_85
+import math
 
 class Functions:
     
@@ -95,3 +96,68 @@ class Functions:
         # If everything is provided, return phi
         return phi
     
+    # Solves for the missing variable in the SNRD equation.
+    # Equation components:
+    #     SNRD(f) = K_bar * |H(f)| * |O_n(f)| / sqrt(K_bar + (K_bar)^2 * |O_n(f)|^2) * sqrt(var{H(f)} + P * sigma_n^2)    
+    # @param f Frequency value (not used directly in calculation)
+    # @param h_f Signal response at frequency f (optional, None if unknown)
+    # @param Noise signal at frequency f (optional, None if unknown)
+    # @param Scaling factor (optional, None if unknown)
+    # @param Variance of h_f (optional, None if unknown)
+    # @param p_sigma_n_squared Noise power (optional, None if unknown)
+    # @return The calculated value of the missing variable.
+    @staticmethod
+    def function21_104(h_f=None, o_n_f=None, k_bar=None, var_h_f=None, p_sigma_n_squared=None):
+        
+        # If h_f is missing, solve for it
+        if h_f is None:
+            if all(v is not None for v in [o_n_f, k_bar, var_h_f, p_sigma_n_squared]):
+                numerator = k_bar * abs(o_n_f)
+                denominator = math.sqrt(k_bar + k_bar**2 * abs(o_n_f)**2) * math.sqrt(var_h_f + p_sigma_n_squared)
+                return numerator / denominator
+            else:
+                raise ValueError("Insufficient data to solve for h_f.")
+        
+        # If o_n_f is missing, solve for it
+        elif o_n_f is None:
+            if all(v is not None for v in [h_f, k_bar, var_h_f, p_sigma_n_squared]):
+                numerator = k_bar * abs(h_f)
+                denominator = math.sqrt(k_bar + k_bar**2 * (10**-10)) * math.sqrt(var_h_f + p_sigma_n_squared)
+                result = numerator / denominator
+                
+                # Now solve for o_n(f)
+                o_n_f_result = abs(result)
+                return o_n_f_result
+            else:
+                raise ValueError("Insufficient data to solve for o_n_f.")
+        
+        # If k_bar is missing, solve for it
+        elif k_bar is None:
+            if all(v is not None for v in [h_f, o_n_f, var_h_f, p_sigma_n_squared]):
+                numerator = abs(h_f) * abs(o_n_f)
+                denominator = math.sqrt(var_h_f + p_sigma_n_squared)
+                return numerator / denominator
+            else:
+                raise ValueError("Insufficient data to solve for k_bar.")
+        
+        # If var_h_f is missing, solve for it
+        elif var_h_f is None:
+            if all(v is not None for v in [h_f, o_n_f, k_bar, p_sigma_n_squared]):
+                numerator = abs(h_f) * abs(o_n_f)
+                denominator = math.sqrt(k_bar + k_bar**2 * abs(o_n_f)**2) * math.sqrt(p_sigma_n_squared)
+                return numerator / denominator
+            else:
+                raise ValueError("Insufficient data to solve for var_h_f.")
+        
+        # If p_sigma_n_squared is missing, solve for it
+        elif p_sigma_n_squared is None:
+            if all(v is not None for v in [h_f, o_n_f, k_bar, var_h_f]):
+                numerator = abs(h_f) * abs(o_n_f)
+                denominator = math.sqrt(k_bar + k_bar**2 * abs(o_n_f)**2) * math.sqrt(var_h_f)
+                return numerator / denominator
+            else:
+                raise ValueError("Insufficient data to solve for p_sigma_n_squared.")
+        
+        else:
+            raise ValueError("No missing variable to solve for.")
+        

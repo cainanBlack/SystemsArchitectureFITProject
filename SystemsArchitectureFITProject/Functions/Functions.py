@@ -50,7 +50,47 @@ class Functions:
         
         else:
             raise ValueError("One variable must be missing to solve for it.")
-        
+
+    # Solve for the missing variable in the equation n_1 =  (77.6P / T) * 10^(-6)
+    # where n_1, P, and T may be known, and one is missing.
+    # This function solves for the missing variable, either n_1, P, or T,
+    # based on the provided known values. If any required variable is missing,
+    # the function will compute its value using the given equation.
+    # @param n_1: Known index of refraction. If None, the function will solve for it.
+    # @param P: Known function of pressure (P, in millibars). If None, the function will solve for it.
+    # @param T: Known funtion of temperature (T, in Kelvin). If None, the function will solve for it.
+    # @return: The computed value of the missing variable (n_1, P, T).
+    # @throws ValueError: If insufficient information is provided to solve for the missing variable.
+    @staticmethod
+    def function21_44(n_1=None, P=None, T=None):
+
+        # If n_1 is missing, calculate n_1 (average frequency)
+        if n_1 is None:
+            if P is not None and T is not None:
+                n_1 = ((77.6 * P) / T) * 1e-6
+                return n_1
+            else:
+                raise ValueError("You must provide P, and T to solve for n_1.")
+
+        # If x is missing, calculate x (average value of x)
+        elif P is None:
+            if n_1 is not None and P is not None:
+                P = (n_1 * T * 1e6) / 77.6
+                return P
+            else:
+                raise ValueError("You must provide n_1 and T to solve for P.")
+
+        # If lambda is missing, calculate lambda
+        elif T is None:
+            if n_1 is not None and P is not None:
+                T = (77.6 * P * 1e6)/ n_1
+                return T
+            else:
+                raise ValueError("You must provide n_1 and P to solve for T")
+
+        else:
+            raise ValueError("One variable must be missing to solve for it.")
+
     # Solves for any missing variable: phi, a_i, rho, or theta.
     # Depending on which variable is missing, it either computes the missing value 
     # or raises a ValueError if the required variables are not provided.

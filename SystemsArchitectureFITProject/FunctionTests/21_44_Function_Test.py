@@ -14,6 +14,7 @@ print("Solved for missing n_1:", missing_n1)
 
 # Case 2: Given values and solve for the missing P
 n_1 = 0.0003 # index of Refractivity (known)
+T = 300      # temperature (T, in Kelvin).
 P = None     # Pressure (P) is missing
 
 # Solve for the missing P using function21_44

@@ -74,7 +74,7 @@ class Functions:
 
         # If P is missing, calculate P (Pressure)
         elif P is None:
-            if n_1 is not None and P is not None:
+            if n_1 is not None and T is not None:
                 P = (n_1 * T * 1e6) / 77.6
                 return P
             else:

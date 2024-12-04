@@ -64,7 +64,7 @@ class Functions:
     @staticmethod
     def function21_44(n_1=None, P=None, T=None):
 
-        # If n_1 is missing, calculate n_1 (average frequency)
+        # If n_1 is missing, calculate n_1 (index of refraction)
         if n_1 is None:
             if P is not None and T is not None:
                 n_1 = ((77.6 * P) / T) * 1e-6
@@ -72,7 +72,7 @@ class Functions:
             else:
                 raise ValueError("You must provide P, and T to solve for n_1.")
 
-        # If x is missing, calculate x (average value of x)
+        # If P is missing, calculate P (Pressure)
         elif P is None:
             if n_1 is not None and P is not None:
                 P = (n_1 * T * 1e6) / 77.6
@@ -80,7 +80,7 @@ class Functions:
             else:
                 raise ValueError("You must provide n_1 and T to solve for P.")
 
-        # If lambda is missing, calculate lambda
+        # If T is missing, calculate T (Temperature)
         elif T is None:
             if n_1 is not None and P is not None:
                 T = (77.6 * P * 1e6)/ n_1

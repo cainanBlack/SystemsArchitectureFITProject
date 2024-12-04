@@ -7,12 +7,8 @@
 ‎
 
 # To start using (How I do it anyways)
-- **Download _eclipse_ and _git bash_**
-- **Open _git bash_ and navigate to your eclipse-workspace**
-Should default to:
-```
-cd ~/eclipse-workspace/
-```
+- **Download _git bash_**
+- **Open _git bash_ and navigate to foulder that you would like this to live**
 - **Create a folder in your workspace with the name _'SystemsArchitectureFITProject'_ and go inside that folder**
 ```
 mkdir SystemsArchitectureFITProject && cd SystemsArchitectureFITProject

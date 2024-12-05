@@ -26,6 +26,6 @@ n_1 = 0.0003  # index of Refractivity (known)
 P = 1007.33   # pressure (known)
 T =  None     # Temperature (T) is missing
 
-# Solve for the missing x using function21_44
+# Solve for the missing T using function21_44
 missingT = functions.function21_44(n_1=n_1, P=P)
-print("Solved for missing x:", missingT)
+print("Solved for missing T:", missingT)

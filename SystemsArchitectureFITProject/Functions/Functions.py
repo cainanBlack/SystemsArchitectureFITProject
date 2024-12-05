@@ -1,4 +1,4 @@
-from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_85
+from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_30, FunctionsFor21_85
 import math
 
 class Functions:
@@ -84,7 +84,7 @@ class Functions:
         # If T is missing, calculate T (Temperature)
         elif T is None:
             if n_1 is not None and P is not None:
-                T = (77.6 * P * 1e6)/ n_1
+                T = (77.6 * P) / (n_1 * 1e6)
                 return T
             else:
                 raise ValueError("You must provide n_1 and P to solve for T")

@@ -50,7 +50,7 @@ class Functions:
         
         else:
             raise ValueError("One variable must be missing to solve for it.")
-        
+    # Solve for the missing variable or coordinates in the equations delta_x = (lambda_ * z) / d_x and delta_y = (lambda_ * z) / d_y  
     @staticmethod 
     def function21_38(delta_x=None, delta_y=None, lambda_=None, z=None, d_x=None, d_y=None):
         
@@ -62,15 +62,15 @@ class Functions:
             else:
                 raise ValueError("You must provide lambda, z, and d_x to solve for delta_x and lambda, z, and d_y to solve for delta_y")
         
-        elif delta_x is None and delta_y is not None:
-            if lambda_ is not None and z is not None and d_x is not None:
+        elif delta_x is None and delta_y is not None and d_x is not None and z is not None:
+            if lambda_ is not None:
                 delta_x = (lambda_ * z) / d_x
                 return delta_x, delta_y
             else:
                 raise ValueError("You must provide lambda, z, and d_x to solve for delta_x")
             
-        elif delta_y is None and delta_x is not None:
-            if lambda_ is not None and z is not None and d_y is not None:
+        elif delta_y is None and delta_x is not None and d_y is not None and z is not None:
+            if lambda_ is not None:
                 delta_y = (lambda_ * z) / d_y
                 return delta_x, delta_y
             else:
@@ -98,21 +98,21 @@ class Functions:
                 raise ValueError("You must provide delta_x, d_x, and lambda to solve for z")
             
         elif z is None and delta_y is not None:
-            if lambda_ is not None and d_x is not None:
+            if lambda_ is not None and d_y is not None:
                 z = (delta_y * d_y) / lambda_
                 return z
             else:
                 raise ValueError("You must provide delta_y, d_y, and lambda to solve for z")
         
-        elif d_x is None:
-            if z is not None and lambda_ is not None and delta_x is not None:
+        elif d_x is None and delta_x is not None:
+            if z is not None and lambda_ is not None:
                 d_x = (lambda_ * z) / delta_x
                 return d_x
             else:
                 raise ValueError("You must provide lambda, z, and delta_x to solve for d_x")
         
-        elif d_y is None:
-            if z is not None and lambda_ is not None and delta_x is not None:
+        elif d_y is None and delta_y is not None:
+            if z is not None and lambda_ is not None:
                 d_y = (lambda_ * z) / delta_y
                 return d_y
             else:
@@ -132,21 +132,21 @@ class Functions:
             else:
                 raise ValueError("You must provide lambda and d_x to solve for delta_theta_d_x and lambda and d_y to solve for delta_theta_d_y")
         
-        elif delta_theta_d_x is None and delta_theta_d_y is not None:
-            if lambda_ is not None and d_x is not None:
+        elif delta_theta_d_x is None and delta_theta_d_y is not None and d_x is not None:
+            if lambda_ is not None:
                 delta_theta_d_x = lambda_ / d_x
                 return delta_theta_d_x, delta_theta_d_y
             else:
                 raise ValueError("You must provide lambda and d_x to solve for delta_theta_d_x")
             
-        elif delta_theta_d_y is None and delta_theta_d_x is not None:
-            if lambda_ is not None and d_y is not None:
+        elif delta_theta_d_y is None and delta_theta_d_x is not None and lambda_ is not None and d_y is not None:
+            if d_x is None:
                 delta_theta_d_y = lambda_ / d_y
                 return delta_theta_d_x, delta_theta_d_y
             else:
                 raise ValueError("You must provide lambda and d_y to solve for delta_theta_d_y")
             
-        elif lambda_ is None and delta_theta_d_x is not None:
+        elif lambda_ is None and delta_theta_d_x is not None and d_y is None and delta_theta_d_y is None:
             if d_x is not None:
                 lambda_ = delta_theta_d_x * d_x
                 return lambda_
@@ -160,7 +160,7 @@ class Functions:
             else:
                 raise ValueError("You must provide d_y to solve for lamda")
             
-        elif d_x is None:
+        elif d_x is None and delta_theta_d_y is None:
             if lambda_ is not None and delta_theta_d_x is not None:
                 d_x = lambda_ / delta_theta_d_x
                 return d_x
@@ -186,19 +186,19 @@ class Functions:
             else:
                 raise ValueError("You must provide lambda, z and d to solve for delta_r_d and lambda and d to solve for delta_theta_d")
             
-        elif delta_r_d is None and delta_theta_d is not None:
-            if lambda_ is not None and z is not None and d is not None:
+        elif delta_r_d is None and delta_theta_d is not None and z is not None:
+            if lambda_ is not None and d is not None:
                 delta_r_d = (1.22 * lambda_ * z) / d
                 return delta_r_d, delta_theta_d
             else:
                 raise ValueError("You must provide lambda, z and d to solve for delta_r_d")
             
-        elif delta_theta_d is None and delta_r_d is not None:
+        elif delta_theta_d is None and delta_r_d is not None and z is None:
             if lambda_ is not None and d is not None:
                 delta_theta_d = (1.22 * lambda_) / d
                 return delta_r_d, delta_theta_d
             else:
-                raise ValueError("You must provide lambda and d to solve for delta_theta_d")
+                raise ValueError("You must provide lambda and d to solve for delta_theta_d.")
             
         elif d is None and delta_r_d is not None:
             if lambda_ is not None and z is not None:
@@ -228,8 +228,8 @@ class Functions:
             else:
                 raise ValueError("You must provide d and delta_theta_d to solve for lambda")
             
-        elif z is None:
-            if lambda_ is not None and d is not None and delta_r_d is not None:
+        elif z is None and delta_r_d is not None and delta_theta_d is not None:
+            if lambda_ is not None and d is not None:
                 z = (delta_r_d * d) / (1.22 * lambda_)
                 return z
             else:

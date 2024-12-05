@@ -52,6 +52,43 @@ class Functions:
         else:
             raise ValueError("One variable must be missing to solve for it.")
 
+    # Solve for the missing variable in the equation I(f) = O(f) ∗ H(f).
+    # where I(f), O(f), and H(f) may be known, and one is missing.
+    # This function solves for the missing variable, either I(f) or  O(f) or H(f).
+    # based on the provided known values. If any required variable is missing,
+    # the function will compute its value using the given equation.
+    # @param I_f: Known image spectrum. If None, the function will solve for it.
+    # @param O_f: Known object radiant emittance. If None, the function will solve for it.
+    # @param H_f: Known optical transfer function. If None, the function will solve for it.
+    # @return: The computed value of the missing variable (I_f, O_f, H_f).
+    # @throws ValueError: If insufficient information is provided to solve for the missing variable.
+    @staticmethod
+    def function21_30(I_f=None, O_f=None, H_f=None):
+
+        # If  I_f is missing, calculate  I_f (image spectrum)
+        if I_f is None:
+            if O_f is not None and H_f is not None:
+                return FunctionsFor21_30.compute_I_f(O_f, H_f)
+            else:
+                raise ValueError("You must provide O_f, and H_f to solve for I_f.")
+
+        # If O_f is missing, calculate O_f (object radiant emittance)
+        elif O_f is None:
+            if I_f is not None and H_f is not None:
+                return FunctionsFor21_30.compute_O_f(I_f, H_f)
+            else:
+                raise ValueError("You must provide I_f and H_f to solve for O_f.")
+
+        # If H_f is missing, calculate H_f (optical transfer function)
+        elif H_f is None:
+            if I_f is not None and O_f is not None:
+                return FunctionsFor21_30.compute_H_f(I_f, O_f)
+            else:
+                raise ValueError("You must provide I_f and O_f to solve for H_f")
+
+        else:
+            raise ValueError("One variable must be missing to solve for it.")
+
     # Solve for the missing variable in the equation n_1 =  (77.6P / T) * 10^(-6)
     # where n_1, P, and T may be known, and one is missing.
     # This function solves for the missing variable, either n_1, P, or T,

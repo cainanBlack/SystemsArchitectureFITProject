@@ -1,4 +1,73 @@
 from scipy.optimize import bisect
+import numpy as np
+
+class FunctionsFor21_30:
+    @staticmethod
+    def compute_I_f(O_f, H_f):
+        """
+        Solves for I(f) in the equation I(f) = O(f) * H(f).
+
+        Parameters:
+            O_f (numpy.ndarray): The original signal in the frequency domain.
+            H_f (numpy.ndarray): The transfer function in the frequency domain.
+
+        Returns:
+            numpy.ndarray: The output signal I(f) in the frequency domain.
+        """
+        O_f = np.array(O_f)
+        H_f = np.array(H_f)
+
+        # Solve for I(f) using element-wise multiplication
+        I_f = O_f * H_f
+
+        return I_f
+
+    @staticmethod
+    def compute_O_f(I_f, H_f):
+        """
+        Solves for O(f) in the equation I(f) = O(f) * H(f).
+
+        Parameters:
+            I_f (numpy.ndarray): The output signal in the frequency domain.
+            H_f (numpy.ndarray): The transfer function in the frequency domain.
+
+        Returns:
+            numpy.ndarray: The original signal O(f) in the frequency domain.
+        """
+
+        I_f = np.array(I_f)
+        H_f = np.array(H_f)
+
+        # Ensure H_f does not have zero values to avoid division by zero
+        H_f_safe = np.where(H_f == 0, np.nan, H_f) # Replace zeros with NaN
+
+        # Solve for O(f)
+        O_f = I_f / H_f_safe
+        return O_f
+
+    @staticmethod
+    def compute_H_f(I_f, O_f):
+        """
+        Solves for H(f) in the equation I(f) = O(f) * H(f).
+
+        Parameters:
+            I_f (numpy.ndarray): The output signal in the frequency domain.
+            O_f (numpy.ndarray): The original signal in the frequency domain.
+
+        Returns:
+            numpy.ndarray: The transfer function H(f) in the frequency domain.
+        """
+
+        I_f = np.array(I_f)
+        O_f = np.array(O_f)
+
+        # Ensure O_f does not have zero values to avoid division by zero
+        O_f_safe = np.where(O_f == 0, np.nan, O_f)  # Replace zeros with NaN
+
+        # Solve for H(f)
+        H_f = I_f / O_f_safe
+
+        return H_f
 
 class FunctionsFor21_85:
     

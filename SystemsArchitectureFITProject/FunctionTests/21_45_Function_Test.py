@@ -4,12 +4,15 @@ from SystemsArchitectureFITProject.Functions.Functions import Functions
 functions = Functions()
 
 # Case 1: Solve for Φ_n^K
-Phi_result = functions.function21_45(missing='Phi', C_n=1e-14, K=1.0)
+Phi_result = functions.function21_45(C_n=1e-14, K=1.0)
+print("Solved for missing Phi:", Phi_result)
 
 # Case 2: Solve for C_n
-C_n_result = functions.function21_45(missing='C_n', Phi=3.3e-16, K=1.0)
+C_n_result = functions.function21_45(Phi=3.3e-16, K=1.0)
+print("Solved for missing C_n:", C_n_result)
 
 # Case 3: Solve for K
-K_result = functions.function21_45(missing='K', Phi=3.3e-16, C_n=1e-14)
+K_result = functions.function21_45(Phi=3.3e-16, C_n=1e-14)
+print("Solved for missing K:", K_result)
 
-Phi_result, C_n_result, K_result
+

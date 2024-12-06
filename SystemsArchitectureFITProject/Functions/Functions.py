@@ -421,28 +421,31 @@ class Functions:
     # @param K (float): The wavenumber (optional if solving for K)
     # @return float: The value of the missing variable
     @staticmethod
-    def function21_45(missing=None, Phi=None, C_n=None, K=None):
+    def function21_45(Phi=None, C_n=None, K=None):
 
         # Solve for Φ_n^K (Phi)
-        if missing == 'Phi':
-            if C_n is None or K is None:
+        if Phi is None:
+            if C_n is not None or K is not None:
+                return 0.033 * (C_n**2) * (K**(-11/3))
+            else:
                 raise ValueError("C_n and K must be provided to solve for Phi.")
-            return 0.033 * (C_n**2) * (K**(-11/3))
         
         # Solve for C_n
-        elif missing == 'C_n':
-            if Phi is None or K is None:
+        elif C_n is None:
+            if Phi is not None or K is not None:
+                return (Phi / (0.033 * K**(-11/3)))**0.5
+            else:
                 raise ValueError("Phi and K must be provided to solve for C_n.")
-            return (Phi / (0.033 * K**(-11/3)))**0.5
         
         # Solve for K
-        elif missing == 'K':
-            if Phi is None or C_n is None:
+        elif K is None:
+            if Phi is not None or C_n is not None:
+                return (Phi / (0.033 * C_n**2))**(-3/11)
+            else:
                 raise ValueError("Phi and C_n must be provided to solve for K.")
-            return (Phi / (0.033 * C_n**2))**(-3/11)
         
         else:
-            raise ValueError("Invalid variable to solve for. Choose 'Phi', 'C_n', 'K', or None for direct calculation.")
+            raise ValueError("Must be missing a variable to solve for.")
 
     # Solves the Kolmogorov Power Spectral Density (V-variant) Φ_n^V(K) equation for a missing variable.
     # @param missing (str): The variable to solve for ('Phi', 'C_n', 'K', 'L_0', or 'K_m'), or None if no variable is missing

@@ -168,7 +168,6 @@ class FunctionsFor21_85:
                 # Solve for this a_i using the equation:
                 # a_i = (phi - sum(a_j * Z_j(rho, theta) for all j != i)) / Z_i(rho, theta)
                 a[i] = (phi - sum(a_j * Z[j](rho, theta) for j, a_j in enumerate(a) if j != i)) / Z[i](rho, theta)
-        
         return a        
         
 class FunctionsFor21_58:
@@ -179,18 +178,24 @@ class FunctionsFor21_58:
     # @return: The computed value of gamma_n
     @staticmethod
     def solveForGamma_N(phi_n, r):
-            def integrand(*k):
-                k = np.array(k)
-                return phi_n(k) * np.exp(-1j * np.dot(k, r))
+        # Ensure phi_n is callable
+        if not callable(phi_n):
+            raise TypeError("phi_n must be callable.")
+        
+        # Ensure r is treated as a vector, even if it's a single float
+        r = np.array(r)
 
-            # Define integration limits (assuming infinite)
-            ndim = len(r)
-            limits = [(-np.inf, np.inf)] * ndim
+        def integrand(*k):
+            k = np.array(k)
+            return phi_n(k) * np.exp(-1j * np.dot(k, r))
 
-            # Perform the integration
-            enter = integrand
-            result = nquad(enter, limits)
-            return result
+        # Define integration limits (assuming infinite)
+        ndim = len(r)  # Now this works because r is a numpy array or list
+        limits = [(-np.inf, np.inf)] * ndim
+
+        # Perform the integration
+        result, _ = nquad(integrand, limits)  # Access the first element for the result
+        return result
     
     # Solves for the missing value of phi_n.
     # @param r The position vector in real space
@@ -198,12 +203,17 @@ class FunctionsFor21_58:
     # @return: The computed value of phi_n
     @staticmethod
     def solveForPhi_n(gamma_n, r):
-            def phi_n(k):
-                k = np.array(k)
-                return gamma_n * np.exp(1j * np.dot(k, r))
-            result = phi_n([0.2, 0.1])
-            return result
-     
+        # Ensure gamma_n is a float or a callable function
+        if not callable(gamma_n):
+            raise TypeError("gamma_n must be callable.")
+
+        def phi_n(k):
+            k = np.array(k)
+            return gamma_n * np.exp(1j * np.dot(k, r))
+        
+        result = phi_n([0.2, 0.1])  # This is just an example to evaluate the function
+        return result
+    
     # Solves for the missing value of r.
     # @param phi_n 𝛷𝑛(𝑘⃗)
     # @param r The position vector in real space

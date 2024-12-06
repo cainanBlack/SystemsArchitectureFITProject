@@ -45,6 +45,22 @@ class FunctionSolverApp:
         # Function to solve for missing variables in 21_63
         self.func21_63_button = tk.Button(self.root, text="Solve Function 21_63", command=self.solve_function21_63)
         self.func21_63_button.grid(row=7, column=0, padx=10, pady=10)
+        
+        # Function to solve for missing variables in 21_19
+        self.func21_19_button = tk.Button(self.root, text="Solve Function 21_19", command=self.solve_function21_19)
+        self.func21_19_button.grid(row=8, column=0, padx=10, pady=10)
+        
+        # Function to solve for missing variables in 21_38
+        self.func21_38_button = tk.Button(self.root, text="Solve Function 21_38", command=self.solve_function21_38)
+        self.func21_38_button.grid(row=9, column=0, padx=10, pady=10)
+        
+        # Function to solve for missing variables in 21_39
+        self.func21_39_button = tk.Button(self.root, text="Solve Function 21_39", command=self.solve_function21_39)
+        self.func21_39_button.grid(row=10, column=0, padx=10, pady=10)
+        
+        # Function to solve for missing variables in 21_40
+        self.func21_40_button = tk.Button(self.root, text="Solve Function 21_40", command=self.solve_function21_40)
+        self.func21_40_button.grid(row=11, column=0, padx=10, pady=10)
 
     def solve_function21_18(self):
         # Create input dialog for function 21_18
@@ -77,6 +93,22 @@ class FunctionSolverApp:
     def solve_function21_63(self):
         # Create input dialog for function 21_63
         self.open_input_dialog("function21_63")
+        
+    def solve_function21_19(self):
+        # Create input dialog for function 21_19
+        self.open_input_dialog("function21_19")
+
+    def solve_function21_38(self):
+        # Create input dialog for function 21_38
+        self.open_input_dialog("function21_38")
+        
+    def solve_function21_39(self):
+        # Create input dialog for function 21_39
+        self.open_input_dialog("function21_39")
+        
+    def solve_function21_40(self):
+        # Create input dialog for function 21_40
+        self.open_input_dialog("function21_40")
 
     def open_input_dialog(self, func_name):
         # Open dialog box to input parameters for the given function
@@ -104,6 +136,14 @@ class FunctionSolverApp:
                     result = Functions.function21_104(**values)
                 elif func_name == "function21_63":
                     result = Functions.function_21_63(**values)
+                elif func_name == "function21_19":
+                    result = Functions.function21_19(gpf=values.get('gpf'), wp=values.get('wp'), theta_x=values.get('theta_x: in degrees'))
+                elif func_name == "function21_38":
+                    result = Functions.function21_38(delta_x=values.get('delta_x (Can solve for both this and delta_y if both are blank)'), delta_y=values.get('delta_y (Can solve for both this and delta_x if both are blank)'), lambda_=values.get('lambda_'), z=values.get('z'), d_x=values.get('d_x'), d_y=values.get('d_y'))
+                elif func_name == "function21_39":
+                    result = Functions.function21_39(delta_theta_d_x=values.get('delta_theta_d_x (Can solve for both this and delta_theta_d_y if both are blank)'), delta_theta_d_y=values.get('delta_theta_d_y (Can solve for both this and delta_theta_d_x if both are blank)'), lambda_=values.get('lambda_'), d_x=values.get('d_x'), d_y=values.get('d_y'))
+                elif func_name == "function21_40":
+                    result = Functions.function21_40(delta_r_d=values.get('delta_r_d (Can solve for both this and delta_theta_d if both are blank)'), delta_theta_d=values.get('delta_theta_d (Can solve for both this and delta_r_d if both are blank)'), lambda_=values.get('lambda_'), z=values.get('z'), d=values.get('d'))
         
                 # Show the result
                 messagebox.showinfo("Result", f"The result is: {result}")
@@ -134,6 +174,14 @@ class FunctionSolverApp:
             labels = ["h_f", "o_n_f", "k_bar", "var_h_f", "p_sigma_n_squared"]
         elif func_name == "function21_63":
             labels = ["Gamma_p", "Delta_x", "r0"]
+        elif func_name == "function21_19":
+            labels = ["gpf", "wp", "theta_x: in degrees"]
+        elif func_name == "function21_38":
+            labels = ["delta_x (Can solve for both this and delta_y if both are blank)", "delta_y (Can solve for both this and delta_x if both are blank)", "lambda_", "z", "d_x", "d_y"]
+        elif func_name == "function21_39":
+            labels = ["delta_theta_d_x (Can solve for both this and delta_theta_d_y if both are blank)", "delta_theta_d_y (Can solve for both this and delta_theta_d_x if both are blank)", "lambda_", "d_x", "d_y"]
+        elif func_name == "function21_40":
+            labels = ["delta_r_d (Can solve for both this and delta_theta_d if both are blank)", "delta_theta_d (Can solve for both this and delta_r_d if both are blank)", "lambda_", "z", "d"]
 
         for i, label in enumerate(labels):
             tk.Label(input_window, text=label).grid(row=i, column=0, padx=10, pady=5)

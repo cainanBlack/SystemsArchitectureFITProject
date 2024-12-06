@@ -185,14 +185,14 @@ class Functions:
     # @param gamma_n (complex) The value of Γₙ(r)
     # @return: The computed value of the equation
     @staticmethod
-    def function21_58(r=None, gamma_n=None, k=None):
+    def function21_58(r=[], gamma_n=None, k=None):
 
         def phi_n(k):
             # Example Φₙ(k⃗): Gaussian form
             return np.exp(-np.linalg.norm(k)**2)
 
         if gamma_n is None:
-            if k is not None and r is not None:
+            if k is not None and r is not []:
                 if type(k) is not tuple:
                     raise ValueError("Incorrect type for K! Entered: ", type(k), ", Required: tuple")
                 if type(r) is not list:
@@ -203,7 +203,7 @@ class Functions:
                 raise ValueError("phi_n and r are required to solve for gamma_n.")
 
         elif k is None:
-            if r is not None and gamma_n is not None:
+            if r is not [] and gamma_n is not None:
                 if type(gamma_n) is not complex and type(gamma_n) is not int and type(gamma_n) is not float:
                     raise ValueError("Incorrect type for gamma_n! Entered: ", type(gamma_n), ", Required: complex, int, or float")
                 if type(r) is not list:
@@ -213,7 +213,7 @@ class Functions:
             else:
                 raise ValueError("r and gamma_n are required to solve for phi_n.")
 
-        elif r is None:
+        elif r is []:
             if k is not None and gamma_n is not None:
                 if type(k) is not tuple:
                     raise ValueError("Incorrect type for K! Entered: ", type(k), ", Required: tuple")
@@ -282,7 +282,7 @@ class Functions:
     # @param r0 The given r0 value (optional)
     # @return The solved value of the missing variable.
     @staticmethod
-    def function_21_63(Gamma_p=None, Delta_x=None, r0=None):
+    def function21_63(Gamma_p=None, Delta_x=None, r0=None):
         mp.dps = 10  # Set precision level for mpmath
 
         # Check if solving for Gamma_p (if Delta_x and r0 are given)
@@ -381,6 +381,27 @@ class Functions:
 
         # If none of the above, raise an error
         raise ValueError("One of θ₀, λ, or L must be set to None (missing).")
+    
+    # Solves for the short exposure of optical transfer.
+    # @param f Frequency (The only perameter)
+    # @returns the solution of the equation
+    @staticmethod
+    def function21_78(f):
+        # Helper functions 
+        def O(f):
+            return np.sin(f)
+
+        def HSE(f):
+            return np.exp(-f)
+
+        def Ho(f):
+            return f**2
+        
+        # Compute the value of the equation
+        if f is not None:
+            return O(f) * HSE(f) * Ho(f)
+        else:
+            raise ValueError("Must provide value for f")
 
     # Solves for any missing variable: phi, a_i, rho, or theta.
     # Depending on which variable is missing, it either computes the missing value 

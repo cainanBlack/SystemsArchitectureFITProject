@@ -1,14 +1,13 @@
-## Systems Architecture Project, FIT ##
-> Need scipy <br />
-> run this in your cmd: <br />
-> python -m pip install scipy <br />
-
-
-‎
-
-# To start using (How I do it anyways)
+# Systems Architecture Project, FIT 
+## Libraries and Pre-requisites
+> Need scipy and numpy libraries installed<br />
+> When you have python properly installed and set up, run this for the libraries you need:<br />
+```
+pip install scipy, numpy
+```
+## To start using (How I do it anyways)
 - **Download _git bash_**
-- **Open _git bash_ and navigate to foulder that you would like this to live**
+- **Open _git bash_ and navigate to folder that you would like this to live**
 - **Create a folder in your workspace with the name _'SystemsArchitectureFITProject'_ and go inside that folder**
 ```
 mkdir SystemsArchitectureFITProject && cd SystemsArchitectureFITProject
@@ -21,7 +20,7 @@ git init -b main
 ```
 git remote add origin REMOTE-URL
 ```
-- **Optional:** You can verifiy that the repo is added correctly by checking the output of this command matches
+- **Optional:** You can verify that the repo is added correctly by checking the output of this command matches
 ```
 git remote -v
 ```

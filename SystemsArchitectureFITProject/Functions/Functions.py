@@ -132,36 +132,55 @@ class Functions:
         else:
             raise ValueError("One variable must be missing to solve for it.")
         
-    # Solves for the missing variable: phi_n, r, or gamma_n.
+    # Solves for the missing variable: k, r, or gamma_n.
     # Equation Components:
     #     𝛤𝑛(𝑟) = ∫ 𝑑𝑘⃗ 𝛷𝑛(𝑘⃗)𝑒(−𝑗𝑘⃗ ∗𝑟)
-    # @param phi_n 𝛷𝑛(𝑘⃗)
-    # @param r The position vector in real space
-    # @param gamma_n The value of Γₙ(r)
+    # @param k (tuple) 𝛷𝑛(𝑘⃗)
+    # @param r (list) The position vector in real space
+    # @param gamma_n (complex) The value of Γₙ(r)
     # @return: The computed value of the equation
     @staticmethod
-    def function21_58(phi_n=None, r=None, gamma_n=None):
+    def function21_58(r=None, gamma_n=None, k=None):
+
+        def phi_n(k):
+            # Example Φₙ(k⃗): Gaussian form
+            return np.exp(-np.linalg.norm(k)**2)
 
         if gamma_n is None:
-            if phi_n is not None and r is not None:
+            if k is not None and r is not None:
+                if type(k) is not tuple:
+                    raise ValueError("Incorrect type for K! Entered: ", type(k), ", Required: tuple")
+                if type(r) is not list:
+                    raise ValueError("Incorrect type for R! Entered: ", type(r), " Required: list")
+                
                 return FunctionsFor21_58.solveForGamma_N(phi_n, r)
             else:
                 raise ValueError("phi_n and r are required to solve for gamma_n.")
 
-        elif phi_n is None:
+        elif k is None:
             if r is not None and gamma_n is not None:
+                if type(gamma_n) is not complex and type(gamma_n) is not int and type(gamma_n) is not float:
+                    raise ValueError("Incorrect type for gamma_n! Entered: ", type(gamma_n), ", Required: complex, int, or float")
+                if type(r) is not list:
+                    raise ValueError("Incorrect type for R! Entered: ", type(r), " Required: list")
+                
                 return FunctionsFor21_58.solveForPhi_n(gamma_n, r)
             else:
                 raise ValueError("r and gamma_n are required to solve for phi_n.")
 
         elif r is None:
-            if phi_n is not None and gamma_n is not None:
+            if k is not None and gamma_n is not None:
+                if type(k) is not tuple:
+                    raise ValueError("Incorrect type for K! Entered: ", type(k), ", Required: tuple")
+                if type(gamma_n) is not complex and type(gamma_n) is not int and type(gamma_n) is not float:
+                    raise ValueError("Incorrect type for gamma_n! Entered: ", type(gamma_n), ", Required: complex, int, or float")
+                
                 return FunctionsFor21_58.solveForR(phi_n, gamma_n)
             else:
                 raise ValueError("phi_n and gamma_n are required to solve for r.")
             
         else:
-            raise ValueError("Invalid missing variable. Choose 'gamma_n', 'phi_n', or 'r'.")
+            raise ValueError("Invalid missing variable. Choose 'gamma_n', 'k', or 'r'.")
 
     # Solves for and missing value in 𝛷𝑛(𝑘⃗ ) = 1\(2𝜋)3 ∫ 𝑑𝑟𝛤𝑛(𝑟)𝑒(𝑗𝑘⃗ ∗𝑟)n
     # @param phi Target value for Φ_n(k) (set to None if solving for Φ_n(k)).

@@ -16,35 +16,35 @@ class FunctionSolverApp:
     def create_widgets(self):
         # Function to solve for missing variables in 21_18
         self.func21_18_button = tk.Button(self.root, text="Solve Function 21_18", command=self.solve_function21_18)
-        self.func21_18_button.grid(row=0, column=0, padx=10, pady=10)
+        self.func21_18_button.grid(row=0, column=0, padx=250, pady=10)
 
         # Function to solve for missing variables in 21_30
         self.func21_30_button = tk.Button(self.root, text="Solve Function 21_30", command=self.solve_function21_30)
-        self.func21_30_button.grid(row=1, column=0, padx=10, pady=10)
+        self.func21_30_button.grid(row=1, column=0, padx=250, pady=10)
 
         # Function to solve for missing variables in 21_44
         self.func21_44_button = tk.Button(self.root, text="Solve Function 21_44", command=self.solve_function21_44)
-        self.func21_44_button.grid(row=2, column=0, padx=10, pady=10)
+        self.func21_44_button.grid(row=2, column=0, padx=250, pady=10)
 
         # Function to solve for missing variables in 21_58
         self.func21_58_button = tk.Button(self.root, text="Solve Function 21_58", command=self.solve_function21_58)
-        self.func21_58_button.grid(row=3, column=0, padx=10, pady=10)
+        self.func21_58_button.grid(row=3, column=0, padx=250, pady=10)
 
         # Function to solve for missing variables in 21_59
         self.func21_59_button = tk.Button(self.root, text="Solve Function 21_59", command=self.solve_function21_59)
-        self.func21_59_button.grid(row=4, column=0, padx=10, pady=10)
+        self.func21_59_button.grid(row=4, column=0, padx=250, pady=10)
 
         # Function to solve for missing variables in 21_85
         self.func21_85_button = tk.Button(self.root, text="Solve Function 21_85", command=self.solve_function21_85)
-        self.func21_85_button.grid(row=5, column=0, padx=10, pady=10)
+        self.func21_85_button.grid(row=5, column=0, padx=250, pady=10)
 
         # Function to solve for missing variables in 21_104
         self.func21_104_button = tk.Button(self.root, text="Solve Function 21_104", command=self.solve_function21_104)
-        self.func21_104_button.grid(row=6, column=0, padx=10, pady=10)
+        self.func21_104_button.grid(row=6, column=0, padx=250, pady=10)
 
         # Function to solve for missing variables in 21_63
         self.func21_63_button = tk.Button(self.root, text="Solve Function 21_63", command=self.solve_function21_63)
-        self.func21_63_button.grid(row=7, column=0, padx=10, pady=10)
+        self.func21_63_button.grid(row=7, column=0, padx=250, pady=10)
 
     def solve_function21_18(self):
         # Create input dialog for function 21_18
@@ -136,9 +136,9 @@ class FunctionSolverApp:
             labels = ["Gamma_p", "Delta_x", "r0"]
 
         for i, label in enumerate(labels):
-            tk.Label(input_window, text=label).grid(row=i, column=0, padx=10, pady=5)
+            tk.Label(input_window, text=label).grid(row=i, column=0, padx=150, pady=5)
             entry = tk.Entry(input_window)
-            entry.grid(row=i, column=1, padx=10, pady=5)
+            entry.grid(row=i, column=1, padx=150, pady=5)
             entry_widgets[label] = entry
 
         # Add a button to submit the input and call the respective function

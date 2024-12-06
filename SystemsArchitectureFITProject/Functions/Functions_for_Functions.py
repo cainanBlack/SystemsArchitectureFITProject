@@ -1,4 +1,5 @@
 from scipy.optimize import bisect
+import math
 
 class FunctionsFor21_85:
     
@@ -85,3 +86,17 @@ class FunctionsFor21_85:
                 a[i] = (phi - sum(a_j * Z[j](rho, theta) for j, a_j in enumerate(a) if j != i)) / Z[i](rho, theta)
         
         return a
+
+class FunctionsFor21_19:
+        
+    @staticmethod
+    def eulerFormula(theta_x):
+        
+        theta_radians = math.radians(theta_x)
+        cos_theta = math.cos(theta_radians)
+        sin_theta = math.sin(theta_radians)
+        
+        comp = complex(round(cos_theta, 4) , round(sin_theta, 4))
+        return comp
+        
+        

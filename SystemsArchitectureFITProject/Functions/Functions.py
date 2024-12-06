@@ -1,4 +1,5 @@
-from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_85
+from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_19, FunctionsFor21_85
+import math
 
 class Functions:
     
@@ -50,7 +51,40 @@ class Functions:
         
         else:
             raise ValueError("One variable must be missing to solve for it.")
+
+    # Solve for the missing variable in the equation gpf = wp * e^(j(theta_x)) 
+    # @param gpf: Known generalized pupil function. If None, the function will solve for it.
+    # @param wp: Known amplitude function. If None, the function will solve for it.
+    # @param theta_x: Known phase term. If None, the function will solve for it.
+    # @return: The computed value of the missing variable
+    # @throws ValueError: If insufficient information is provided to solve for the missing variable.    
+    @staticmethod
+    def function21_19(gpf=None, wp=None, theta_x=None):
         
+        #if gpf is missing, solve for gpf
+        if gpf is None:
+            if wp is not None and theta_x is not None:
+                gpf = wp * FunctionsFor21_19.eulerFormula(theta_x)
+                return gpf
+            else:
+                raise ValueError("You must provide wp and theta to solve for gpf")
+        
+        #if wp is missing, solve for wp
+        if wp is None:
+            if gpf is not None and theta_x is not None:
+                wp = gpf / FunctionsFor21_19.eulerFormula(theta_x)
+                return wp
+            else:
+                raise ValueError("You must provide gpf and theta to solve for wp")
+            
+        #if theta_x is missing, solve for theta_x
+        if theta_x is None:
+            if gpf is not None and wp is not None:
+                theta_x = (math.log(gpf/wp) / complex(0, 1))
+                return theta_x
+            else:
+                raise ValueError("You must provide gpf and wp to solve for theta_x")   
+            
     # Solve for the missing variable or coordinates in the equations delta_x = (lambda_ * z) / d_x and delta_y = (lambda_ * z) / d_y
     # Where delta_x, delta_y, lambda, z, d_y, and d_x may be known and one is missing. delta_x and delta_y may both be missing if the rest
     # of the variables are known. This function solves for each variable based on the provided known values. If any required variable(s) is missing,

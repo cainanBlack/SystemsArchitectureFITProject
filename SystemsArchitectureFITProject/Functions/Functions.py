@@ -1,10 +1,11 @@
-from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_30, FunctionsFor21_58, FunctionsFor21_59, FunctionsFor21_85
+from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_19, FunctionsFor21_30, FunctionsFor21_58, FunctionsFor21_59, FunctionsFor21_85
 import math
 from scipy.optimize import fsolve, root
 import numpy as np
 from mpmath import mp
 from scipy.integrate import quad
 from scipy.optimize import root_scalar
+
 
 
 class Functions:
@@ -57,6 +58,285 @@ class Functions:
         else:
             raise ValueError("One variable must be missing to solve for it.")
 
+    # Solve for the missing variable in the equation gpf = wp * e^(j(theta_x)) 
+    # @param gpf: Known generalized pupil function. If None, the function will solve for it.
+    # @param wp: Known amplitude function. If None, the function will solve for it.
+    # @param theta_x: Known phase term. If None, the function will solve for it.
+    # @return: The computed value of the missing variable
+    # @throws ValueError: If insufficient information is provided to solve for the missing variable.    
+    @staticmethod
+    def function21_19(gpf=None, wp=None, theta_x=None):
+        
+        #if gpf is missing, solve for gpf
+        if gpf is None:
+            if wp is not None and theta_x is not None:
+                gpf = wp * FunctionsFor21_19.eulerFormula(theta_x)
+                return gpf
+            else:
+                raise ValueError("You must provide wp and theta to solve for gpf")
+        
+        #if wp is missing, solve for wp
+        if wp is None:
+            if gpf is not None and theta_x is not None:
+                wp = gpf / FunctionsFor21_19.eulerFormula(theta_x)
+                return wp
+            else:
+                raise ValueError("You must provide gpf and theta to solve for wp")
+            
+        #if theta_x is missing, solve for theta_x
+        if theta_x is None:
+            if gpf is not None and wp is not None:
+                theta_x = (math.log(gpf/wp) / complex(0, 1))
+                return theta_x
+            else:
+                raise ValueError("You must provide gpf and wp to solve for theta_x")   
+            
+    # Solve for the missing variable or coordinates in the equations delta_x = (lambda_ * z) / d_x and delta_y = (lambda_ * z) / d_y
+    # Where delta_x, delta_y, lambda, z, d_y, and d_x may be known and one is missing. delta_x and delta_y may both be missing if the rest
+    # of the variables are known. This function solves for each variable based on the provided known values. If any required variable(s) is missing,
+    # the funciton will compute its value using the given equation.
+    # @param delta_x: the x coordinate of the given rectangular aperture. If None, the function will solve for it.
+    # @param delta_y: the y coordinate of the given rectangular aperture. If None, the function will solve for it.
+    # @param lambda_: Known wavelength. If None, the function will solve for it.
+    # @param z: Known separation distance between object plane and entrance pupil plane of the imaging system. If None, the function will solve for it.
+    # @param d_x: Known length of the x direction aperture width. If None, the function will solve for it.
+    # @param d_y: Known length of the y direction aperture width. If None, the function will solve for it.
+    # @return: The computed value of the missing variable(s)
+    # @throws ValueError: If insufficient information is provided to solve for the missing variable.
+    @staticmethod 
+    def function21_38(delta_x=None, delta_y=None, lambda_=None, z=None, d_x=None, d_y=None):
+        
+        # If both coordinates are missing, calculate them 
+        if delta_x is None and delta_y is None:
+            if lambda_ is not None and z is not None and d_x is not None and d_y is not None:
+                delta_x = (lambda_ * z) / d_x
+                delta_y = (lambda_ * z) / d_y
+                return delta_x, delta_y
+            else:
+                raise ValueError("You must provide lambda, z, and d_x to solve for delta_x and lambda, z, and d_y to solve for delta_y")
+        
+        # If delta_x is missing and delta_y is known, calculate delta_x
+        elif delta_x is None and delta_y is not None and d_x is not None and z is not None:
+            if lambda_ is not None:
+                delta_x = (lambda_ * z) / d_x
+                return delta_x, delta_y
+            else:
+                raise ValueError("You must provide lambda, z, and d_x to solve for delta_x")
+        
+        # If delta_y is missing and delta_x is known, calculate delta_y
+        elif delta_y is None and delta_x is not None and d_y is not None and z is not None:
+            if lambda_ is not None:
+                delta_y = (lambda_ * z) / d_y
+                return delta_x, delta_y
+            else:
+                raise ValueError("You must provide lambda, z, and d_y to solve for delta_y")
+        
+        # If lambda_ is missing and delta_x is known, calculate lambda_
+        elif  lambda_ is None and delta_x is not None:
+            if z is not None and d_x is not None:
+                lambda_ = (delta_x * d_x) / z
+                return lambda_
+            else:
+                raise ValueError("You must provide delta_x, d_x, and z to solve for lambda")
+        
+        # If lambda_ is missing and delta_y is known, calculate lambda_    
+        elif lambda_ is None and delta_y is not None:
+            if z is not None and d_y is not None:
+                lambda_ = (delta_y * d_y) / z
+                return lambda_
+            else:
+                raise ValueError("You must provide delta_y, d_y, and z to solve for lambda")
+        
+        # If z is missing and delta_x is known, calculate z    
+        elif z is None and delta_x is not None:
+            if lambda_ is not None and d_x is not None:
+                z = (delta_x * d_x) / lambda_
+                return z
+            else:
+                raise ValueError("You must provide delta_x, d_x, and lambda to solve for z")
+        
+        # If z is missing and delta_y is known, calculate z      
+        elif z is None and delta_y is not None:
+            if lambda_ is not None and d_y is not None:
+                z = (delta_y * d_y) / lambda_
+                return z
+            else:
+                raise ValueError("You must provide delta_y, d_y, and lambda to solve for z")
+        
+        # If d_x is missing, calculate d_x
+        elif d_x is None and delta_x is not None:
+            if z is not None and lambda_ is not None:
+                d_x = (lambda_ * z) / delta_x
+                return d_x
+            else:
+                raise ValueError("You must provide lambda, z, and delta_x to solve for d_x")
+        
+        # If d_y is missing, calculate d_y
+        elif d_y is None and delta_y is not None:
+            if z is not None and lambda_ is not None:
+                d_y = (lambda_ * z) / delta_y
+                return d_y
+            else:
+                raise ValueError("You must provide lambda, z, and delta_y to solve for d_y")
+        
+        else:
+            raise ValueError("Invalid combination of missing variables")
+    
+    # Solve for the missing variable or coordinates in the equations delta_theta_d_x = lambda_ / d_x and delta_theta_d_y = lambda_ / d_y
+    # Where delta_theta_d_x, delta_theta_d_y, lambda, d_y, and d_x may be known and one is missing. delta_theta_d_x and delta_theta_d_y may both be missing if the rest
+    # of the variables are known. This function solves for each variable based on the provided known values. If any required variable(s) is missing,
+    # the funciton will compute its value using the given equation.
+    # @param delta_theta_d_x: the x coordinate of the given rectangular aperture based on angular properties. If None, the function will solve for it.
+    # @param delta_theta_d_y: the y coordinate of the given rectangular aperture based on angular properties. If None, the function will solve for it.
+    # @param lambda_: Known wavelength. If None, the function will solve for it.
+    # @param d_x: Known length of the x direction aperture width. If None, the function will solve for it.
+    # @param d_y: Known length of the y direction aperture width. If None, the function will solve for it.
+    # @return: The computed value of the missing variable(s)
+    # @throws ValueError: If insufficient information is provided to solve for the missing variable.   
+    @staticmethod 
+    def function21_39(delta_theta_d_x=None, delta_theta_d_y=None, lambda_=None, d_x=None, d_y=None):
+        
+        # If both coordinates are missing, calculate them
+        if delta_theta_d_x is None and delta_theta_d_y is None:
+            if lambda_ is not None and d_x is not None and d_y is not None:
+                delta_theta_d_x = lambda_ / d_x
+                delta_theta_d_y = lambda_ / d_y
+                return delta_theta_d_x, delta_theta_d_y
+            else:
+                raise ValueError("You must provide lambda and d_x to solve for delta_theta_d_x and lambda and d_y to solve for delta_theta_d_y")
+            
+        # If delta_theta_d_x is missing and delta_theta_d_y is known, calculate delta_theta_d_x
+        elif delta_theta_d_x is None and delta_theta_d_y is not None and d_x is not None:
+            if lambda_ is not None:
+                delta_theta_d_x = lambda_ / d_x
+                return delta_theta_d_x, delta_theta_d_y
+            else:
+                raise ValueError("You must provide lambda and d_x to solve for delta_theta_d_x")
+        
+        # If delta_theta_d_y is missing and delta_theta_d_x is known, calculate delta_theta_d_y    
+        elif delta_theta_d_y is None and delta_theta_d_x is not None and lambda_ is not None and d_y is not None:
+            if d_x is None:
+                delta_theta_d_y = lambda_ / d_y
+                return delta_theta_d_x, delta_theta_d_y
+            else:
+                raise ValueError("You must provide lambda and d_y to solve for delta_theta_d_y")
+         
+        # If lambda_ is missing and delta_theta_d_x is known, calculate lambda_    
+        elif lambda_ is None and delta_theta_d_x is not None and d_y is None and delta_theta_d_y is None:
+            if d_x is not None:
+                lambda_ = delta_theta_d_x * d_x
+                return lambda_
+            else:
+                raise ValueError("You must provide d_x to solve for lamda")
+        
+        # If lambda_ is missing and delta_theta_d_y is known, calculate lambda_    
+        elif lambda_ is None and delta_theta_d_y is not None:
+            if d_y is not None:
+                lambda_ = delta_theta_d_y * d_y
+                return lambda_
+            else:
+                raise ValueError("You must provide d_y to solve for lamda")
+            
+        # If d_x is missing, calculate d_x    
+        elif d_x is None and delta_theta_d_y is None:
+            if lambda_ is not None and delta_theta_d_x is not None:
+                d_x = lambda_ / delta_theta_d_x
+                return d_x
+            else:
+                raise ValueError("You must provide lambda and delta_theta_d_x to solve for d_x")
+            
+        # If d_x is missing, calculate d_x
+        elif d_y is None:
+            if lambda_ is not None and delta_theta_d_y is not None:
+                d_y = lambda_ / delta_theta_d_y
+                return d_y
+            else:
+                raise ValueError("You must provide lambda and delta_theta_d_x to solve for d_y")
+        else:
+            raise ValueError("Invalid combination of missing variables")
+    
+    # Solve for the missing variable or coordinates in the equations delta_r_d = (1.22 * lambda_ * z) / d and delta_theta_d = (1.22 * lambda_) / d
+    # Where delta_r_d, delta_theta_d, lambda, z, and d may be known and one is missing. delta_r_d and delta_theta_d may both be missing if the rest
+    # of the variables are known. This function solves for each variable based on the provided known values. If any required variable(s) is missing,
+    # the funciton will compute its value using the given equation.
+    # @param delta_r_d: the spacial resolution of the given rectangular aperture. If None, the function will solve for it.
+    # @param delta_theta_d: the angular resolution of the given rectangular aperture. If None, the function will solve for it.
+    # @param lambda_: Known wavelength. If None, the function will solve for it.
+    # @param z: Known separation distance between object plane and entrance pupil plane of the imaging system. If None, the function will solve for it.
+    # @param d: Known spacial direction. If None, the function will solve for it.
+    # @return: The computed value of the missing variable(s)
+    # @throws ValueError: If insufficient information is provided to solve for the missing variable.      
+    @staticmethod    
+    def function21_40(delta_r_d=None, delta_theta_d=None, lambda_=None, z=None, d=None):
+        
+        # If both coordinates are missing, calculate them
+        if delta_r_d is None and delta_theta_d is None:
+            if lambda_ is not None and z is not None and d is not None:
+                delta_r_d = (1.22 * lambda_ * z) / d
+                delta_theta_d = (1.22 * lambda_) / d
+                return delta_r_d, delta_theta_d
+            else:
+                raise ValueError("You must provide lambda, z and d to solve for delta_r_d and lambda and d to solve for delta_theta_d")
+        
+        # If delta_r_d is missing and delta_theta_d is known, calculate delta_r_d    
+        elif delta_r_d is None and delta_theta_d is not None and z is not None:
+            if lambda_ is not None and d is not None:
+                delta_r_d = (1.22 * lambda_ * z) / d
+                return delta_r_d, delta_theta_d
+            else:
+                raise ValueError("You must provide lambda, z and d to solve for delta_r_d")
+        
+        # If delta_theta_d is missing and delta_r_d is known, calculate delta_theta_d    
+        elif delta_theta_d is None and delta_r_d is not None and z is None:
+            if lambda_ is not None and d is not None:
+                delta_theta_d = (1.22 * lambda_) / d
+                return delta_r_d, delta_theta_d
+            else:
+                raise ValueError("You must provide lambda and d to solve for delta_theta_d.")
+            
+        # If d is missing and delta_r_d is known, calculate d    
+        elif d is None and delta_r_d is not None:
+            if lambda_ is not None and z is not None:
+                d = (1.22 * lambda_ * z) / delta_r_d
+                return d
+            else:
+                raise ValueError("You must provide lambda, z and delta_r_d to solve for d")
+            
+        # If d is missing and delta_theta_d is known, calculate d    
+        elif d is None and delta_theta_d is not None:
+            if lambda_ is not None:
+                d = (1.22 * lambda_) / delta_theta_d
+                return d
+            else:
+                raise ValueError("You must provide lambda and delta_theta_d to solve for d")
+        
+        # If lambda_ is missing and delta_r_d is known, calculate lambda_    
+        elif lambda_ is None and delta_r_d is not None:
+            if d is not None and z is not None:
+                lambda_ = (delta_r_d * d) / (1.22 * z)
+                return lambda_
+            else:
+                raise ValueError("You must provide d and z and delta_r_d to solve for lambda")
+            
+        # If lambda_ is missing and delta_theta_d is known, calculate lambda_    
+        elif lambda_ is None and delta_theta_d is not None:
+            if d is not None:
+                lambda_ = (delta_theta_d * d) / 1.22
+                return lambda_
+            else:
+                raise ValueError("You must provide d and delta_theta_d to solve for lambda")
+        
+        # If z is missing, calculate z    
+        elif z is None and delta_r_d is not None and delta_theta_d is not None:
+            if lambda_ is not None and d is not None:
+                z = (delta_r_d * d) / (1.22 * lambda_)
+                return z
+            else:
+                raise ValueError("You must provide delta_r_d, lamdba_, and d to solve for z")
+            
+        else:
+            raise ValueError("Invalid combination of missing variables")
+            
     # Solve for the missing variable in the equation I(f) = O(f) ∗ H(f).
     # where I(f), O(f), and H(f) may be known, and one is missing.
     # This function solves for the missing variable, either I(f) or  O(f) or H(f).

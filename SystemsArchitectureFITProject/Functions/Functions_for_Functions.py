@@ -1,9 +1,22 @@
 from scipy.optimize import bisect
+import math
 import numpy as np
 from scipy.integrate import nquad
 from scipy.fft import fftn, ifftn, fftshift
 from scipy.optimize import minimize
 
+class FunctionsFor21_19:
+        
+    @staticmethod
+    def eulerFormula(theta_x):
+        
+        theta_radians = math.radians(theta_x)
+        cos_theta = math.cos(theta_radians)
+        sin_theta = math.sin(theta_radians)
+        
+        comp = complex(round(cos_theta, 4) , round(sin_theta, 4))
+        return comp
+    
 class FunctionsFor21_30:
     @staticmethod
     def compute_I_f(O_f, H_f):
@@ -155,9 +168,8 @@ class FunctionsFor21_85:
                 # Solve for this a_i using the equation:
                 # a_i = (phi - sum(a_j * Z_j(rho, theta) for all j != i)) / Z_i(rho, theta)
                 a[i] = (phi - sum(a_j * Z[j](rho, theta) for j, a_j in enumerate(a) if j != i)) / Z[i](rho, theta)
+        return a        
         
-        return a
-    
 class FunctionsFor21_58:
 
     # Solves for the missing value of gamma_n.
@@ -228,6 +240,7 @@ class FunctionsFor21_58:
 # @param r The position vector in real space
 # @return: The computed value of r    
 class FunctionsFor21_59:
+    
     @staticmethod
     def gamma_n_grid(grid_points, bounds):
         x = np.linspace(bounds[0], bounds[1], grid_points)
@@ -245,7 +258,7 @@ class FunctionsFor21_59:
         dV = (bounds[1] - bounds[0]) / gamma_grid.shape[0]  # Volume element
         phi_k = fftshift(fftn(gamma_grid)) * dV
         return phi_k
-   
+
     @staticmethod
     def compute_gamma_fft(phi_grid, bounds):
         """
@@ -254,7 +267,7 @@ class FunctionsFor21_59:
         dV = (bounds[1] - bounds[0]) / phi_grid.shape[0]  # Volume element
         gamma_r = ifftn(fftshift(phi_grid)) * phi_grid.size * dV
         return np.real(gamma_r)
-    
+
     @staticmethod
     def solve_for_k(phi_target, gamma_grid, bounds):
         """

@@ -125,7 +125,7 @@ class FunctionSolverApp:
         elif func_name == "function21_44":
             labels = ["n_1", "P", "T"]
         elif func_name == "function21_58":
-            labels = ["phi_n", "r", "gamma_n"]
+            labels = ["k", "r", "gamma_n"]
         elif func_name == "function21_59":
             labels = ["phi", "gamma", "k"]
         elif func_name == "function21_85":

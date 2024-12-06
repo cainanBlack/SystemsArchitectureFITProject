@@ -157,7 +157,7 @@ class FunctionsFor21_85:
                 a[i] = (phi - sum(a_j * Z[j](rho, theta) for j, a_j in enumerate(a) if j != i)) / Z[i](rho, theta)
         
         return a
-
+    
 class FunctionsFor21_58:
 
     # Solves for the missing value of gamma_n.
@@ -166,34 +166,47 @@ class FunctionsFor21_58:
     # @return: The computed value of gamma_n
     @staticmethod
     def solveForGamma_N(phi_n, r):
-            def integrand(*k):
-                k = np.array(k)
-                return phi_n(k) * np.exp(-1j * np.dot(k, r))
+        # Ensure phi_n is callable
+        if not callable(phi_n):
+            raise TypeError("phi_n must be callable.")
+        
+        # Ensure r is treated as a vector, even if it's a single float
+        r = np.array(r)
 
-            # Define integration limits (assuming infinite)
-            ndim = len(r)
-            limits = [(-np.inf, np.inf)] * ndim
+        def integrand(*k):
+            k = np.array(k)
+            return phi_n(k) * np.exp(-1j * np.dot(k, r))
 
-            # Perform the integration
-            enter = integrand
-            result = nquad(enter, limits)
-            return result
+        # Define integration limits (assuming infinite)
+        ndim = len(r)  # Now this works because r is a numpy array or list
+        limits = [(-np.inf, np.inf)] * ndim
+
+        # Perform the integration
+        result, _ = nquad(integrand, limits)  # Access the first element for the result
+        return result
     
     # Solves for the missing value of phi_n.
     # @param r The position vector in real space
     # @param gamma_n The value of Γₙ(r)
     # @return: The computed value of phi_n
+    @staticmethod
     def solveForPhi_n(gamma_n, r):
-            def phi_n(k):
-                k = np.array(k)
-                return gamma_n * np.exp(1j * np.dot(k, r))
-            result = phi_n([0.2, 0.1])
-            return result
-     
+        # Ensure gamma_n is a float or a callable function
+        if not callable(gamma_n):
+            raise TypeError("gamma_n must be callable.")
+
+        def phi_n(k):
+            k = np.array(k)
+            return gamma_n * np.exp(1j * np.dot(k, r))
+        
+        result = phi_n([0.2, 0.1])  # This is just an example to evaluate the function
+        return result
+    
     # Solves for the missing value of r.
     # @param phi_n 𝛷𝑛(𝑘⃗)
     # @param r The position vector in real space
     # @return: The computed value of r
+    @staticmethod
     def solveForR(phi_n, gamma_n):
         def error_function(r_guess):
             r_guess = np.array(r_guess)
@@ -220,6 +233,7 @@ class FunctionsFor21_58:
 # @param r The position vector in real space
 # @return: The computed value of r    
 class FunctionsFor21_59:
+    @staticmethod
     def gamma_n_grid(grid_points, bounds):
         x = np.linspace(bounds[0], bounds[1], grid_points)
         y = np.linspace(bounds[0], bounds[1], grid_points)
@@ -228,6 +242,7 @@ class FunctionsFor21_59:
         r_squared = xx**2 + yy**2 + zz**2
         return np.exp(-r_squared)  # Example: Gaussian
     
+    @staticmethod
     def compute_phi_fft(gamma_grid, bounds):
         """
         Compute Φ_n(k) using FFT.
@@ -235,7 +250,8 @@ class FunctionsFor21_59:
         dV = (bounds[1] - bounds[0]) / gamma_grid.shape[0]  # Volume element
         phi_k = fftshift(fftn(gamma_grid)) * dV
         return phi_k
-
+   
+    @staticmethod
     def compute_gamma_fft(phi_grid, bounds):
         """
         Compute Γ_n(r) using the inverse FFT.
@@ -243,7 +259,8 @@ class FunctionsFor21_59:
         dV = (bounds[1] - bounds[0]) / phi_grid.shape[0]  # Volume element
         gamma_r = ifftn(fftshift(phi_grid)) * phi_grid.size * dV
         return np.real(gamma_r)
-
+    
+    @staticmethod
     def solve_for_k(phi_target, gamma_grid, bounds):
         """
         Solve for k numerically using optimization.

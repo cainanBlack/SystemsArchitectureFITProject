@@ -1,6 +1,9 @@
 from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_30, FunctionsFor21_58, FunctionsFor21_59, FunctionsFor21_85
 import math
+from scipy.optimize import fsolve, root
 import numpy as np
+from mpmath import mp
+
 
 class Functions:
     
@@ -16,36 +19,35 @@ class Functions:
     # @return: The computed value of the missing variable (f, x, lambda, or d_i).
     # @throws ValueError: If insufficient information is provided to solve for the missing variable.
     @staticmethod
-    def function21_18(f=None, x=None, lambda_=None, d_i=None):
-        
+    def function21_18(f=None, x=None, lambda_param=None, d_i=None):
         # If f is missing, calculate f (average frequency)
         if f is None:
-            if x is not None and lambda_ is not None and d_i is not None:
-                f = x / (lambda_ * d_i)
+            if x is not None and lambda_param is not None and d_i is not None:
+                f = x / (lambda_param * d_i)
                 return f
             else:
                 raise ValueError("You must provide x, lambda, and d_i to solve for f.")
         
         # If x is missing, calculate x (average value of x)
         elif x is None:
-            if f is not None and lambda_ is not None and d_i is not None:
-                x = f * lambda_ * d_i
+            if f is not None and lambda_param is not None and d_i is not None:
+                x = f * lambda_param * d_i
                 return x
             else:
                 raise ValueError("You must provide f, lambda, and d_i to solve for x.")
         
         # If lambda is missing, calculate lambda
-        elif lambda_ is None:
+        elif lambda_param is None:
             if f is not None and x is not None and d_i is not None:
-                lambda_ = x / (f * d_i)
-                return lambda_
+                lambda_param = x / (f * d_i)
+                return lambda_param
             else:
                 raise ValueError("You must provide f, x, and d_i to solve for lambda.")
         
         # If d_i is missing, calculate d_i
         elif d_i is None:
-            if f is not None and x is not None and lambda_ is not None:
-                d_i = x / (f * lambda_)
+            if f is not None and x is not None and lambda_param is not None:
+                d_i = x / (f * lambda_param)
                 return d_i
             else:
                 raise ValueError("You must provide f, x, and lambda to solve for d_i.")
@@ -176,6 +178,8 @@ class Functions:
                 raise ValueError("Missing k for solving Φ_n(k).")
             gamma_grid = FunctionsFor21_59.gamma_n_grid(grid_points, bounds)
             phi_k = FunctionsFor21_59.compute_phi_fft(gamma_grid, bounds)
+            if isinstance(k, float):
+                k = (k, k, k)  # Make k a tuple if it's a float
             kx, ky, kz = k
             k_values = np.linspace(bounds[0], bounds[1], grid_points)
             i = (np.abs(k_values - kx)).argmin()
@@ -190,7 +194,9 @@ class Functions:
             phi_grid = FunctionsFor21_59.compute_phi_fft(FunctionsFor21_59.gamma_n_grid(grid_points, bounds), bounds)
             gamma_grid = FunctionsFor21_59.compute_gamma_fft(phi_grid, bounds)
             r_values = np.linspace(bounds[0], bounds[1], grid_points)
-            x, y, z = k
+            if isinstance(k, float):
+                k = (k, k, k)  # Make k a tuple if it's a float
+            x, y, z = k  # Now k is guaranteed to be unpackable
             i = (np.abs(r_values - x)).argmin()
             j = (np.abs(r_values - y)).argmin()
             k = (np.abs(r_values - z)).argmin()
@@ -203,6 +209,61 @@ class Functions:
 
         else:
             raise ValueError("One variable must be None to solve for it.")
+        
+    # Solves for the missing variable ('Gamma_p', 'Delta_x', or 'r0') in the equation:
+    #     Gamma_p = exp(-6.88 * Delta_x^(5/3) / (2 * r0))
+    # @param missing_var The variable to solve for ('Gamma_p', 'Delta_x', or 'r0')
+    # @param Gamma_p The given Gamma_p value (optional)
+    # @param Delta_: The given Delta_x value (optional)
+    # @param r0 The given r0 value (optional)
+    # @return The solved value of the missing variable.
+    @staticmethod
+    def function_21_63(Gamma_p=None, Delta_x=None, r0=None):
+        mp.dps = 10  # Set precision level for mpmath
+
+        # Check if solving for Gamma_p (if Delta_x and r0 are given)
+        if Gamma_p is None:
+            if Delta_x is not None and r0 is not None:
+                # Direct calculation of Gamma_p (ensure result is real)
+                return float(mp.exp(-6.88 * Delta_x**(5/3) / (2 * r0)))  # Convert to float
+            
+            else:
+                raise ValueError("Delta_x and r0 are required to solve for Gamma_p.")
+        
+        # Check if solving for Delta_x (if Gamma_p and r0 are given)
+        elif Delta_x is None:
+            if Gamma_p is not None and r0 is not None:
+                def equation(vars):
+                    # Equation to solve for Delta_x
+                    result = (mp.log(Gamma_p) * -2 * r0 / 6.88)**(3/5) - vars[0]
+                    return [float(result.real)]  # Ensure result is real and convert to float
+                
+                # Initial guess for Delta_x (if not provided)
+                initial_guess = [Delta_x if Delta_x is not None else 1.0]
+                solution = root(equation, initial_guess, method='hybr', options={'xtol': 1e-12, 'maxfev': 100000})
+                return solution.x[0]  # Return the first solution
+                
+            else:
+                raise ValueError("Gamma_p and r0 are required to solve for Delta_x.")
+        
+        # Check if solving for r0 (if Gamma_p and Delta_x are given)
+        elif r0 is None:
+            if Gamma_p is not None and Delta_x is not None:
+                def equation(vars):
+                    # Equation to solve for r0
+                    result = (mp.log(Gamma_p) * -6.88 * Delta_x**(5/3) / 2) - vars[0]
+                    return [float(result.real)]  # Ensure result is real and convert to float
+                
+                # Initial guess for r0 (if not provided)
+                initial_guess = [r0 if r0 is not None else 1.0]
+                solution = root(equation, initial_guess, method='hybr', options={'xtol': 1e-12, 'maxfev': 100000})
+                return solution.x[0]  # Return the first solution
+
+            else:
+                raise ValueError("Gamma_p and Delta_x are required to solve for r0.")
+        
+        else:
+            raise ValueError("No variable is missing. Please leave one of Gamma_p, Delta_x, or r0 as None.")
 
     # Solves for any missing variable: phi, a_i, rho, or theta.
     # Depending on which variable is missing, it either computes the missing value 
@@ -312,4 +373,3 @@ class Functions:
         
         else:
             raise ValueError("No missing variable to solve for.")
-        

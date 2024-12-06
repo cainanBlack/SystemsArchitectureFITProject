@@ -14,3 +14,5 @@ K_result = functions.function21_45(missing='K', Phi=3.3e-16, C_n=1e-14)
 
 # Case 4: Calculate when no variable is missing
 direct_result = functions.function21_45(missing=None, Phi=3.3e-16, C_n=1e-14, K=1.0)
+
+Phi_result, C_n_result, K_result, direct_result

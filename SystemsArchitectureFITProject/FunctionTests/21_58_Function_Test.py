@@ -8,11 +8,6 @@ testGamma_n = 5 + 2j  # Γₙ(r)
 testR = [1.0, 0.5]    # Position vector r
 testK = (1,1,1)
 
-print("typeK: ", type(testK))
-print("typeGN: ", type(testGamma_n))
-print("typeR: ", type(testR))
-
-
 # Case 1: Given values and solve for the missing gamma_n
 missing_gamma_n = functions.function21_58(r=testR, k=testK)
 print("Solved for missing n_1:", missing_gamma_n)

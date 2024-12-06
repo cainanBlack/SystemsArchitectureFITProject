@@ -23,49 +23,53 @@ class FunctionSolverApp:
         self.func21_44_button = tk.Button(self.root, text="Solve Function 21_44", command=self.solve_function21_44)
         self.func21_44_button.grid(row=2, column=0, padx=250, pady=10)
 
+        # Function to solve for missing variables in 21_52
+        self.func21_52_button = tk.Button(self.root, text="Solve Function 21_52", command=self.solve_function21_52)
+        self.func21_52_button.grid(row=3, column=0, padx=250, pady=10)
+
         # Function to solve for missing variables in 21_58
         self.func21_58_button = tk.Button(self.root, text="Solve Function 21_58", command=self.solve_function21_58)
-        self.func21_58_button.grid(row=3, column=0, padx=250, pady=10)
+        self.func21_58_button.grid(row=4, column=0, padx=250, pady=10)
 
         # Function to solve for missing variables in 21_59
         self.func21_59_button = tk.Button(self.root, text="Solve Function 21_59", command=self.solve_function21_59)
-        self.func21_59_button.grid(row=4, column=0, padx=250, pady=10)
+        self.func21_59_button.grid(row=5, column=0, padx=250, pady=10)
                 
         # Function to solve for missing variables in 21_63
         self.func21_63_button = tk.Button(self.root, text="Solve Function 21_63", command=self.solve_function21_63)
-        self.func21_63_button.grid(row=5, column=0, padx=250, pady=10)
+        self.func21_63_button.grid(row=6, column=0, padx=250, pady=10)
                 
         # Function to solve for missing variables in 21_74
         self.func21_104_button = tk.Button(self.root, text="Solve Function 21_74", command=self.solve_function21_74)
-        self.func21_104_button.grid(row=6, column=0, padx=250, pady=10)
+        self.func21_104_button.grid(row=7, column=0, padx=250, pady=10)
 
         # Function to solve for missing variables in 21_78
         self.func21_104_button = tk.Button(self.root, text="Solve Function 21_78", command=self.solve_function21_78)
-        self.func21_104_button.grid(row=7, column=0, padx=250, pady=10)
+        self.func21_104_button.grid(row=8, column=0, padx=250, pady=10)
 
         # Function to solve for missing variables in 21_85
         self.func21_85_button = tk.Button(self.root, text="Solve Function 21_85", command=self.solve_function21_85)
-        self.func21_85_button.grid(row=8, column=0, padx=250, pady=10)
+        self.func21_85_button.grid(row=9, column=0, padx=250, pady=10)
 
         # Function to solve for missing variables in 21_104
         self.func21_104_button = tk.Button(self.root, text="Solve Function 21_104", command=self.solve_function21_104)
-        self.func21_104_button.grid(row=9, column=0, padx=10, pady=10)
+        self.func21_104_button.grid(row=10, column=0, padx=10, pady=10)
         
         # Function to solve for missing variables in 21_19
         self.func21_19_button = tk.Button(self.root, text="Solve Function 21_19", command=self.solve_function21_19)
-        self.func21_19_button.grid(row=10, column=0, padx=10, pady=10)
+        self.func21_19_button.grid(row=11, column=0, padx=10, pady=10)
         
         # Function to solve for missing variables in 21_38
         self.func21_38_button = tk.Button(self.root, text="Solve Function 21_38", command=self.solve_function21_38)
-        self.func21_38_button.grid(row=11, column=0, padx=10, pady=10)
+        self.func21_38_button.grid(row=12, column=0, padx=10, pady=10)
         
         # Function to solve for missing variables in 21_39
         self.func21_39_button = tk.Button(self.root, text="Solve Function 21_39", command=self.solve_function21_39)
-        self.func21_39_button.grid(row=12, column=0, padx=10, pady=10)
+        self.func21_39_button.grid(row=13, column=0, padx=10, pady=10)
         
         # Function to solve for missing variables in 21_40
         self.func21_40_button = tk.Button(self.root, text="Solve Function 21_40", command=self.solve_function21_40)
-        self.func21_40_button.grid(row=13, column=0, padx=10, pady=10)
+        self.func21_40_button.grid(row=14, column=0, padx=10, pady=10)
 
 
     def solve_function21_18(self):
@@ -79,6 +83,10 @@ class FunctionSolverApp:
     def solve_function21_44(self):
         # Create input dialog for function 21_44
         self.open_input_dialog("function21_44")
+
+    def solve_function21_52(self):
+        # Create input dialog for function 21_52
+        self.open_input_dialog("function21_52")
 
     def solve_function21_58(self):
         # Create input dialog for function 21_58
@@ -140,6 +148,8 @@ class FunctionSolverApp:
                     result = Functions.function21_30(**values)
                 elif func_name == "function21_44":
                     result = Functions.function21_44(**values)
+                elif func_name == "function21_52":
+                    result = Functions.function21_52(**values)
                 elif func_name == "function21_58":
                     result = Functions.function21_58(**values)
                 elif func_name == "function21_59":
@@ -182,6 +192,8 @@ class FunctionSolverApp:
             labels = ["I_f", "O_f", "H_f"]
         elif func_name == "function21_44":
             labels = ["n_1", "P", "T"]
+        elif func_name == "function21_52":
+            labels = ["h", "v", "A", "Cn2_value"]
         elif func_name == "function21_58":
             labels = ["k", "r", "gamma_n"]
         elif func_name == "function21_59":

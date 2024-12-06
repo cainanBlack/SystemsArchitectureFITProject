@@ -139,22 +139,9 @@ class Functions:
     # @param Phi (float): The power spectral density Φ_n^K (optional if solving for Phi)
     # @param C_n (float): The refractive index structure constant (optional if solving for C_n)
     # @param K (float): The wavenumber (optional if solving for K)
-    # @return float or dict: The value of the missing variable or a comparison when no variable is missing
+    # @return float: The value of the missing variable
     @staticmethod
     def function21_45(missing=None, Phi=None, C_n=None, K=None):
-
-        # Case when no variable is missing
-        if missing is None:
-            if Phi is None or C_n is None or K is None:
-                raise ValueError("All variables (Phi, C_n, and K) must be provided to calculate PSD directly.")
-            # Calculate Φ_n^K
-            calculated_Phi = 0.033 * (C_n**2) * (K**(-11/3))
-            # Compare with provided Φ_n^K
-            return {
-                "Calculated Φ_n^K": calculated_Phi,
-                "Provided Φ_n^K": Phi,
-                "Matches Provided?": abs(calculated_Phi - Phi) < 1e-10
-            }
 
         # Solve for Φ_n^K (Phi)
         if missing == 'Phi':

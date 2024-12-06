@@ -133,6 +133,49 @@ class Functions:
 
         else:
             raise ValueError("One variable must be missing to solve for it.")
+
+    # Solves the Kolmogorov Power Spectral Density (PSD) equation for a missing variable or calculates PSD directly
+    # @param missing (str): The variable to solve for ('Phi', 'C_n', 'K'), or None if no variable is missing
+    # @param Phi (float): The power spectral density Φ_n^K (optional if solving for Phi)
+    # @param C_n (float): The refractive index structure constant (optional if solving for C_n)
+    # @param K (float): The wavenumber (optional if solving for K)
+    # @return float or dict: The value of the missing variable or a comparison when no variable is missing
+    @staticmethod
+    def function21_45(missing=None, Phi=None, C_n=None, K=None):
+
+        # Case when no variable is missing
+        if missing is None:
+            if Phi is None or C_n is None or K is None:
+                raise ValueError("All variables (Phi, C_n, and K) must be provided to calculate PSD directly.")
+            # Calculate Φ_n^K
+            calculated_Phi = 0.033 * (C_n**2) * (K**(-11/3))
+            # Compare with provided Φ_n^K
+            return {
+                "Calculated Φ_n^K": calculated_Phi,
+                "Provided Φ_n^K": Phi,
+                "Matches Provided?": abs(calculated_Phi - Phi) < 1e-10
+            }
+
+        # Solve for Φ_n^K (Phi)
+        if missing == 'Phi':
+            if C_n is None or K is None:
+                raise ValueError("C_n and K must be provided to solve for Phi.")
+            return 0.033 * (C_n**2) * (K**(-11/3))
+        
+        # Solve for C_n
+        elif missing == 'C_n':
+            if Phi is None or K is None:
+                raise ValueError("Phi and K must be provided to solve for C_n.")
+            return (Phi / (0.033 * K**(-11/3)))**0.5
+        
+        # Solve for K
+        elif missing == 'K':
+            if Phi is None or C_n is None:
+                raise ValueError("Phi and C_n must be provided to solve for K.")
+            return (Phi / (0.033 * C_n**2))**(-3/11)
+        
+        else:
+            raise ValueError("Invalid variable to solve for. Choose 'Phi', 'C_n', 'K', or None for direct calculation.")
         
     # Solves for the missing variable: k, r, or gamma_n.
     # Equation Components:

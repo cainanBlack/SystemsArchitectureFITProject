@@ -499,6 +499,70 @@ class Functions:
         else:
             raise ValueError("Invalid variable to solve for.")
         
+    # Solve for Cn^2(h) or find the missing parameter (h, v, or A) in the given formula.
+    # @param h (float): Height in meters. If None, the function will solve for h.
+    # @param v (float): Frequency. If None, the function will solve for v.
+    # @param A (float): Constant coefficient. If None, the function will solve for A.
+    # @param Cn2_value (float): The value of Cn^2(h). Required if solving for a missing parameter.
+    # @returns float: The solved or computed parameter.
+    @staticmethod
+    def function21_52(h=None, v=None, A=None, Cn2_value=None):
+        def equation_to_solve(x, missing_param):
+            if missing_param == 'h':
+                return (
+                    5.94e-53 * (v / 27)**2 * x**10 * np.exp(-x / 1000)
+                    + 2.7e-16 * np.exp(-x / 1500)
+                    + A * np.exp(-x / 100)
+                    - Cn2_value
+                )
+            elif missing_param == 'v':
+                return (
+                    5.94e-53 * (x / 27)**2 * h**10 * np.exp(-h / 1000)
+                    + 2.7e-16 * np.exp(-h / 1500)
+                    + A * np.exp(-h / 100)
+                    - Cn2_value
+                )
+            elif missing_param == 'A':
+                return (
+                    5.94e-53 * (v / 27)**2 * h**10 * np.exp(-h / 1000)
+                    + 2.7e-16 * np.exp(-h / 1500)
+                    + x * np.exp(-h / 100)
+                    - Cn2_value
+                )
+            else:
+                raise ValueError("Invalid missing parameter.")
+
+        # Check which parameter is missing and solve for it
+        if h is None:
+            if Cn2_value is None or v is None or A is None:
+                raise ValueError("Missing inputs: Cn2_value, v, and A must be provided to solve for h.")
+            missing_param = 'h'
+            initial_guess = 1000  # Initial guess for h
+        elif v is None:
+            if Cn2_value is None or h is None or A is None:
+                raise ValueError("Missing inputs: Cn2_value, h, and A must be provided to solve for v.")
+            missing_param = 'v'
+            initial_guess = 30  # Initial guess for v
+        elif A is None:
+            if Cn2_value is None or h is None or v is None:
+                raise ValueError("Missing inputs: Cn2_value, h, and v must be provided to solve for A.")
+            missing_param = 'A'
+            initial_guess = 1e-15  # Initial guess for A
+        elif Cn2_value is None:
+            if A is None or h is None or v is None:
+                raise ValueError("Missing inputs: Cn2_value, h, and v must be provided to solve for A.")
+            # If all inputs are provided, calculate Cn^2(h)
+            term1 = 5.94e-53 * (v / 27)**2 * h**10 * np.exp(-h / 1000)
+            term2 = 2.7e-16 * np.exp(-h / 1500)
+            term3 = A * np.exp(-h / 100)
+            return term1 + term2 + term3
+        else:
+            raise ValueError("Must leave one parameter empty to solve")
+
+        # Solve for the missing parameter
+        solved_value = fsolve(equation_to_solve, initial_guess, args=(missing_param))
+        return solved_value[0]
+        
     # Solves for the missing variable: k, r, or gamma_n.
     # Equation Components:
     #     𝛤𝑛(𝑟) = ∫ 𝑑𝑘⃗ 𝛷𝑛(𝑘⃗)𝑒(−𝑗𝑘⃗ ∗𝑟)

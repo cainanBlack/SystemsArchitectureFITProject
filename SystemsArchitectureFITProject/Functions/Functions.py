@@ -740,27 +740,32 @@ class Functions:
 
         # If none of the above, raise an error
         raise ValueError("One of θ₀, λ, or L must be set to None (missing).")
-    
-    # Solves for the short exposure of optical transfer.
-    # @param f Frequency (The only perameter)
-    # @returns the solution of the equation
+
+    # Solves for the missing variable in the equation:
+    #     I_SE = O * H_SE * H_0
+    # This version works with scalar (single number) inputs only.
+    # @param I_SE: Output signal (scalar or None if missing).
+    # @param O: Input signal (scalar or None if missing).
+    # @param H_SE: Transfer function H_SE (scalar or None if missing).
+    # @param H_0: Transfer function H_0 (scalar or None if missing).
+    # @return: The value of the missing variable as a single number.
+    # @throws ValueError: If more than one variable is missing or none is missing.
     @staticmethod
-    def function21_78(f):
-        # Helper functions 
-        def O(f):
-            return np.sin(f)
-
-        def HSE(f):
-            return np.exp(-f)
-
-        def Ho(f):
-            return f**2
-        
-        # Compute the value of the equation
-        if f is not None:
-            return O(f) * HSE(f) * Ho(f)
-        else:
-            raise ValueError("Must provide value for f")
+    def function21_78(I_SE=None, O=None, H_SE=None, H_0=None):
+        # Check how many variables are missing
+        missing_count = sum(1 for v in [I_SE, O, H_SE, H_0] if v is None)
+        if missing_count != 1:
+            raise ValueError("Only one variable can be missing.")
+    
+        # Solve for the missing variable
+        if I_SE is None:
+            return O * H_SE * H_0
+        elif O is None:
+            return I_SE / (H_SE * H_0)
+        elif H_SE is None:
+            return I_SE / (O * H_0)
+        elif H_0 is None:
+            return I_SE / (O * H_SE)      
 
     # Solves for any missing variable: phi, a_i, rho, or theta.
     # Depending on which variable is missing, it either computes the missing value 

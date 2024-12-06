@@ -2,9 +2,6 @@ import tkinter as tk
 from tkinter import messagebox
 from SystemsArchitectureFITProject.Functions.Functions import Functions
 
-
-# Assuming the Functions class with your existing functions is imported
-
 class FunctionSolverApp:
     def __init__(self, root):
         self.root = root
@@ -194,7 +191,7 @@ class FunctionSolverApp:
         elif func_name == "function21_74":
             labels = ["theta_0", "lambda_value", "L"]
         elif func_name == "function21_78":
-            labels = ["f"]
+            labels = ["I_SE", "O", "H_SE", "H_0"]
         elif func_name == "function21_85":
             labels = ["phi", "a", "rho", "theta", "Z"]
         elif func_name == "function21_104":

@@ -1,5 +1,6 @@
-from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_30, FunctionsFor21_58, FunctionsFor21_85
+from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_30, FunctionsFor21_58, FunctionsFor21_59, FunctionsFor21_85
 import math
+import numpy as np
 
 class Functions:
     
@@ -159,6 +160,49 @@ class Functions:
             
         else:
             raise ValueError("Invalid missing variable. Choose 'gamma_n', 'phi_n', or 'r'.")
+
+    # Solves for and missing value in 𝛷𝑛(𝑘⃗ ) = 1\(2𝜋)3 ∫ 𝑑𝑟𝛤𝑛(𝑟)𝑒(𝑗𝑘⃗ ∗𝑟)n
+    # @param phi Target value for Φ_n(k) (set to None if solving for Φ_n(k)).
+    # @param gamma Grid function for Γ_n(r) (set to None if solving for Γ_n(r)).
+    # @param k Array [kx, ky, kz] (set to None if solving for k).
+    # @param grid_points Number of points along each dimension of the grid.
+    # @param bounds Tuple (min, max) defining the spatial and Fourier bounds.
+    # @return The solved variable (Φ_n(k), Γ_n(r), or k).
+    @staticmethod
+    def function21_59(phi=None, gamma=None, k=None, grid_points=32, bounds=(-10, 10)):
+        if phi is None:
+            # Solve for Φ_n(k)
+            if k is None:
+                raise ValueError("Missing k for solving Φ_n(k).")
+            gamma_grid = FunctionsFor21_59.gamma_n_grid(grid_points, bounds)
+            phi_k = FunctionsFor21_59.compute_phi_fft(gamma_grid, bounds)
+            kx, ky, kz = k
+            k_values = np.linspace(bounds[0], bounds[1], grid_points)
+            i = (np.abs(k_values - kx)).argmin()
+            j = (np.abs(k_values - ky)).argmin()
+            k = (np.abs(k_values - kz)).argmin()
+            return phi_k[i, j, k]
+
+        elif gamma is None:
+            # Solve for Γ_n(r)
+            if k is None:
+                raise ValueError("Missing k for solving Γ_n(r).")
+            phi_grid = FunctionsFor21_59.compute_phi_fft(FunctionsFor21_59.gamma_n_grid(grid_points, bounds), bounds)
+            gamma_grid = FunctionsFor21_59.compute_gamma_fft(phi_grid, bounds)
+            r_values = np.linspace(bounds[0], bounds[1], grid_points)
+            x, y, z = k
+            i = (np.abs(r_values - x)).argmin()
+            j = (np.abs(r_values - y)).argmin()
+            k = (np.abs(r_values - z)).argmin()
+            return gamma_grid[i, j, k]
+
+        elif k is None:
+            # Solve for k
+            gamma_grid = FunctionsFor21_59.gamma_n_grid(grid_points, bounds)
+            return FunctionsFor21_59.solve_for_k(phi, gamma_grid, bounds)
+
+        else:
+            raise ValueError("One variable must be None to solve for it.")
 
     # Solves for any missing variable: phi, a_i, rho, or theta.
     # Depending on which variable is missing, it either computes the missing value 

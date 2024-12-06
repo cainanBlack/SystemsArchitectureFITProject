@@ -1,6 +1,7 @@
 from scipy.optimize import bisect
 import numpy as np
 from scipy.integrate import nquad
+from scipy.fft import fftn, ifftn, fftshift
 from scipy.optimize import minimize
 
 class FunctionsFor21_30:
@@ -213,4 +214,54 @@ class FunctionsFor21_58:
 
         result = minimize(error_function, initial_guess)
         return result.x
+
+# Solves for the missing value of r.
+# @param phi_n 𝛷𝑛(𝑘⃗)
+# @param r The position vector in real space
+# @return: The computed value of r    
+class FunctionsFor21_59:
+    def gamma_n_grid(grid_points, bounds):
+        x = np.linspace(bounds[0], bounds[1], grid_points)
+        y = np.linspace(bounds[0], bounds[1], grid_points)
+        z = np.linspace(bounds[0], bounds[1], grid_points)
+        xx, yy, zz = np.meshgrid(x, y, z, indexing="ij")
+        r_squared = xx**2 + yy**2 + zz**2
+        return np.exp(-r_squared)  # Example: Gaussian
     
+    def compute_phi_fft(gamma_grid, bounds):
+        """
+        Compute Φ_n(k) using FFT.
+        """
+        dV = (bounds[1] - bounds[0]) / gamma_grid.shape[0]  # Volume element
+        phi_k = fftshift(fftn(gamma_grid)) * dV
+        return phi_k
+
+    def compute_gamma_fft(phi_grid, bounds):
+        """
+        Compute Γ_n(r) using the inverse FFT.
+        """
+        dV = (bounds[1] - bounds[0]) / phi_grid.shape[0]  # Volume element
+        gamma_r = ifftn(fftshift(phi_grid)) * phi_grid.size * dV
+        return np.real(gamma_r)
+
+    def solve_for_k(phi_target, gamma_grid, bounds):
+        """
+        Solve for k numerically using optimization.
+        """
+        phi_k = FunctionsFor21_59.compute_phi_fft(gamma_grid, bounds)
+        k_values = np.linspace(bounds[0], bounds[1], gamma_grid.shape[0])
+
+        def error_function(k):
+            kx, ky, kz = k
+            i = (np.abs(k_values - kx)).argmin()
+            j = (np.abs(k_values - ky)).argmin()
+            k = (np.abs(k_values - kz)).argmin()
+            return np.abs(phi_k[i, j, k] - phi_target)
+
+        initial_guess = [0, 0, 0]
+        result = minimize(
+            error_function,
+            initial_guess,
+            bounds=[(bounds[0], bounds[1])] * 3,
+        )
+        return result.x

@@ -177,11 +177,7 @@ class FunctionsFor21_58:
     # @param r The position vector in real space
     # @return: The computed value of gamma_n
     @staticmethod
-    def solveForGamma_N(phi_n, r):
-        # Ensure phi_n is callable
-        if not callable(phi_n):
-            raise TypeError("phi_n must be callable.")
-        
+    def solveForGamma_N(phi_n, r):        
         # Ensure r is treated as a vector, even if it's a single float
         r = np.array(r)
 
@@ -204,12 +200,11 @@ class FunctionsFor21_58:
     @staticmethod
     def solveForPhi_n(gamma_n, r):
         # Ensure gamma_n is a float or a callable function
-        if not callable(gamma_n):
-            raise TypeError("gamma_n must be callable.")
 
         def phi_n(k):
             k = np.array(k)
-            return gamma_n * np.exp(1j * np.dot(k, r))
+            reShape = np.reshape(r, k.shape)
+            return gamma_n * np.exp(1j * np.dot(k, reShape.T))
         
         result = phi_n([0.2, 0.1])  # This is just an example to evaluate the function
         return result

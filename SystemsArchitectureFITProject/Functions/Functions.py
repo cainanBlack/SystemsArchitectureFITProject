@@ -3,6 +3,8 @@ import math
 from scipy.optimize import fsolve, root
 import numpy as np
 from mpmath import mp
+from scipy.integrate import quad
+from scipy.optimize import root_scalar
 
 
 
@@ -411,37 +413,99 @@ class Functions:
 
         else:
             raise ValueError("One variable must be missing to solve for it.")
+
+    # Solves the Kolmogorov Power Spectral Density (PSD) equation for a missing variable or calculates PSD directly
+    # @param missing (str): The variable to solve for ('Phi', 'C_n', 'K'), or None if no variable is missing
+    # @param Phi (float): The power spectral density Φ_n^K (optional if solving for Phi)
+    # @param C_n (float): The refractive index structure constant (optional if solving for C_n)
+    # @param K (float): The wavenumber (optional if solving for K)
+    # @return float or dict: The value of the missing variable or a comparison when no variable is missing
+    @staticmethod
+    def function21_45(missing=None, Phi=None, C_n=None, K=None):
+
+        # Case when no variable is missing
+        if missing is None:
+            if Phi is None or C_n is None or K is None:
+                raise ValueError("All variables (Phi, C_n, and K) must be provided to calculate PSD directly.")
+            # Calculate Φ_n^K
+            calculated_Phi = 0.033 * (C_n**2) * (K**(-11/3))
+            # Compare with provided Φ_n^K
+            return {
+                "Calculated Φ_n^K": calculated_Phi,
+                "Provided Φ_n^K": Phi,
+                "Matches Provided?": abs(calculated_Phi - Phi) < 1e-10
+            }
+
+        # Solve for Φ_n^K (Phi)
+        if missing == 'Phi':
+            if C_n is None or K is None:
+                raise ValueError("C_n and K must be provided to solve for Phi.")
+            return 0.033 * (C_n**2) * (K**(-11/3))
         
-    # Solves for the missing variable: phi_n, r, or gamma_n.
+        # Solve for C_n
+        elif missing == 'C_n':
+            if Phi is None or K is None:
+                raise ValueError("Phi and K must be provided to solve for C_n.")
+            return (Phi / (0.033 * K**(-11/3)))**0.5
+        
+        # Solve for K
+        elif missing == 'K':
+            if Phi is None or C_n is None:
+                raise ValueError("Phi and C_n must be provided to solve for K.")
+            return (Phi / (0.033 * C_n**2))**(-3/11)
+        
+        else:
+            raise ValueError("Invalid variable to solve for. Choose 'Phi', 'C_n', 'K', or None for direct calculation.")
+        
+    # Solves for the missing variable: k, r, or gamma_n.
     # Equation Components:
     #     𝛤𝑛(𝑟) = ∫ 𝑑𝑘⃗ 𝛷𝑛(𝑘⃗)𝑒(−𝑗𝑘⃗ ∗𝑟)
-    # @param phi_n 𝛷𝑛(𝑘⃗)
-    # @param r The position vector in real space
-    # @param gamma_n The value of Γₙ(r)
+    # @param k (tuple) 𝛷𝑛(𝑘⃗)
+    # @param r (list) The position vector in real space
+    # @param gamma_n (complex) The value of Γₙ(r)
     # @return: The computed value of the equation
     @staticmethod
-    def function21_58(phi_n=None, r=None, gamma_n=None):
+    def function21_58(r=None, gamma_n=None, k=None):
+
+        def phi_n(k):
+            # Example Φₙ(k⃗): Gaussian form
+            return np.exp(-np.linalg.norm(k)**2)
 
         if gamma_n is None:
-            if phi_n is not None and r is not None:
+            if k is not None and r is not None:
+                if type(k) is not tuple:
+                    raise ValueError("Incorrect type for K! Entered: ", type(k), ", Required: tuple")
+                if type(r) is not list:
+                    raise ValueError("Incorrect type for R! Entered: ", type(r), " Required: list")
+                
                 return FunctionsFor21_58.solveForGamma_N(phi_n, r)
             else:
                 raise ValueError("phi_n and r are required to solve for gamma_n.")
 
-        elif phi_n is None:
+        elif k is None:
             if r is not None and gamma_n is not None:
+                if type(gamma_n) is not complex and type(gamma_n) is not int and type(gamma_n) is not float:
+                    raise ValueError("Incorrect type for gamma_n! Entered: ", type(gamma_n), ", Required: complex, int, or float")
+                if type(r) is not list:
+                    raise ValueError("Incorrect type for R! Entered: ", type(r), " Required: list")
+                
                 return FunctionsFor21_58.solveForPhi_n(gamma_n, r)
             else:
                 raise ValueError("r and gamma_n are required to solve for phi_n.")
 
         elif r is None:
-            if phi_n is not None and gamma_n is not None:
+            if k is not None and gamma_n is not None:
+                if type(k) is not tuple:
+                    raise ValueError("Incorrect type for K! Entered: ", type(k), ", Required: tuple")
+                if type(gamma_n) is not complex and type(gamma_n) is not int and type(gamma_n) is not float:
+                    raise ValueError("Incorrect type for gamma_n! Entered: ", type(gamma_n), ", Required: complex, int, or float")
+                
                 return FunctionsFor21_58.solveForR(phi_n, gamma_n)
             else:
                 raise ValueError("phi_n and gamma_n are required to solve for r.")
             
         else:
-            raise ValueError("Invalid missing variable. Choose 'gamma_n', 'phi_n', or 'r'.")
+            raise ValueError("Invalid missing variable. Choose 'gamma_n', 'k', or 'r'.")
 
     # Solves for and missing value in 𝛷𝑛(𝑘⃗ ) = 1\(2𝜋)3 ∫ 𝑑𝑟𝛤𝑛(𝑟)𝑒(𝑗𝑘⃗ ∗𝑟)n
     # @param phi Target value for Φ_n(k) (set to None if solving for Φ_n(k)).
@@ -544,6 +608,59 @@ class Functions:
         
         else:
             raise ValueError("No variable is missing. Please leave one of Gamma_p, Delta_x, or r0 as None.")
+
+
+    # Solves for the missing value (theta_0, lambda_value, or L) in the given equation.
+    # @param theta_0 (float): The known value of θ₀ (must be in range of 0.1e-3 to 0.9e-12).
+    # @param lambda_value (float): The wavelength λ (must be in range of 0.1e-3 to 0.9e-8).
+    # @param L (float): The upper limit of the integral (must be in range of 1 to 13719818).
+    # @param cn_squared_func (function): A function Cn²(z) that describes the refractive index structure parameter as a function of z.
+    @staticmethod
+    def function21_74(theta_0=None, lambda_value=None, L=None):    
+        def cn_squared_func(z):
+            return 1e-14  # Example value, adjust as needed 
+
+        # Define the integral
+        def calculate_integral(L_val):
+            def integrand(z):
+                return cn_squared_func(z) * (z ** (5 / 3))
+            result, _ = quad(integrand, 0, L_val)
+            return result
+
+        # If solving for theta_0
+        if theta_0 is None:
+            if lambda_value is None or L is None:
+                raise ValueError("Both λ and L must be provided to solve for θ₀.")
+            integral_result = calculate_integral(L)
+            theta_0 = (58.1 * 10**-3 * lambda_value**(6/5)) * (integral_result**(-3/5))
+            return theta_0
+
+        # If solving for lambda_value
+        if lambda_value is None:
+            if theta_0 is None or L is None:
+                raise ValueError("Both θ₀ and L must be provided to solve for λ.")
+            integral_result = calculate_integral(L)
+
+            def lambda_equation(lam):
+                return theta_0 - (58.1 * 10**-3 * lam**(6/5)) * (integral_result**(-3/5))
+
+            result = root_scalar(lambda_equation, bracket=[1e-10, 1], method='bisect')
+            return result.root
+
+        # If solving for L
+        if L is None:
+            if theta_0 is None or lambda_value is None:
+                raise ValueError("Both θ₀ and λ must be provided to solve for L.")
+
+            def L_equation(L_val):
+                integral_result = calculate_integral(L_val)
+                return theta_0 - (58.1 * 10**-3 * lambda_value**(6/5)) * (integral_result**(-3/5))
+
+            result = root_scalar(L_equation, bracket=[1e-2, 1e6], method='bisect')
+            return result.root
+
+        # If none of the above, raise an error
+        raise ValueError("One of θ₀, λ, or L must be set to None (missing).")
 
     # Solves for any missing variable: phi, a_i, rho, or theta.
     # Depending on which variable is missing, it either computes the missing value 

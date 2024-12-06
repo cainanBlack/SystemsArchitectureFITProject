@@ -1,5 +1,7 @@
 from scipy.optimize import bisect
 import numpy as np
+from scipy.integrate import nquad
+from scipy.optimize import minimize
 
 class FunctionsFor21_30:
     @staticmethod
@@ -154,3 +156,61 @@ class FunctionsFor21_85:
                 a[i] = (phi - sum(a_j * Z[j](rho, theta) for j, a_j in enumerate(a) if j != i)) / Z[i](rho, theta)
         
         return a
+
+class FunctionsFor21_58:
+
+    # Solves for the missing value of gamma_n.
+    # @param phi_n 𝛷𝑛(𝑘⃗)
+    # @param r The position vector in real space
+    # @return: The computed value of gamma_n
+    @staticmethod
+    def solveForGamma_N(phi_n, r):
+            def integrand(*k):
+                k = np.array(k)
+                return phi_n(k) * np.exp(-1j * np.dot(k, r))
+
+            # Define integration limits (assuming infinite)
+            ndim = len(r)
+            limits = [(-np.inf, np.inf)] * ndim
+
+            # Perform the integration
+            enter = integrand
+            result = nquad(enter, limits)
+            return result
+    
+    # Solves for the missing value of phi_n.
+    # @param r The position vector in real space
+    # @param gamma_n The value of Γₙ(r)
+    # @return: The computed value of phi_n
+    def solveForPhi_n(gamma_n, r):
+            def phi_n(k):
+                k = np.array(k)
+                return gamma_n * np.exp(1j * np.dot(k, r))
+            result = phi_n([0.2, 0.1])
+            return result
+     
+    # Solves for the missing value of r.
+    # @param phi_n 𝛷𝑛(𝑘⃗)
+    # @param r The position vector in real space
+    # @return: The computed value of r
+    def solveForR(phi_n, gamma_n):
+        def error_function(r_guess):
+            r_guess = np.array(r_guess)
+
+            def integrand(*k):
+                k = np.array(k)
+                return phi_n(k) * np.exp(-1j * np.dot(k, r_guess))
+
+            # Integration limits (assuming infinite)
+            ndim = len(r_guess)
+            limits = [(-np.inf, np.inf)] * ndim
+            result, _ = nquad(integrand, limits)
+            return np.abs(result - gamma_n)
+
+        # Initial guess for r
+        ndim = len(gamma_n) if isinstance(gamma_n, (list, np.ndarray)) else 2
+        initial_guess = np.zeros(ndim)
+
+        result = minimize(error_function, initial_guess)
+        return result.x
+    

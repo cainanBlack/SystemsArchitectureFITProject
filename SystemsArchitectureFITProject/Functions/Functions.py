@@ -1,4 +1,4 @@
-from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_30, FunctionsFor21_85
+from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_30, FunctionsFor21_58, FunctionsFor21_85
 import math
 
 class Functions:
@@ -128,6 +128,37 @@ class Functions:
 
         else:
             raise ValueError("One variable must be missing to solve for it.")
+        
+    # Solves for the missing variable: phi_n, r, or gamma_n.
+    # Equation Components:
+    #     𝛤𝑛(𝑟) = ∫ 𝑑𝑘⃗ 𝛷𝑛(𝑘⃗)𝑒(−𝑗𝑘⃗ ∗𝑟)
+    # @param phi_n 𝛷𝑛(𝑘⃗)
+    # @param r The position vector in real space
+    # @param gamma_n The value of Γₙ(r)
+    # @return: The computed value of the equation
+    @staticmethod
+    def function21_58(phi_n=None, r=None, gamma_n=None):
+
+        if gamma_n is None:
+            if phi_n is not None and r is not None:
+                return FunctionsFor21_58.solveForGamma_N(phi_n, r)
+            else:
+                raise ValueError("phi_n and r are required to solve for gamma_n.")
+
+        elif phi_n is None:
+            if r is not None and gamma_n is not None:
+                return FunctionsFor21_58.solveForPhi_n(gamma_n, r)
+            else:
+                raise ValueError("r and gamma_n are required to solve for phi_n.")
+
+        elif r is None:
+            if phi_n is not None and gamma_n is not None:
+                return FunctionsFor21_58.solveForR(phi_n, gamma_n)
+            else:
+                raise ValueError("phi_n and gamma_n are required to solve for r.")
+            
+        else:
+            raise ValueError("Invalid missing variable. Choose 'gamma_n', 'phi_n', or 'r'.")
 
     # Solves for any missing variable: phi, a_i, rho, or theta.
     # Depending on which variable is missing, it either computes the missing value 

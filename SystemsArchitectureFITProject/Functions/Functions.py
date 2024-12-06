@@ -3,6 +3,8 @@ import math
 from scipy.optimize import fsolve, root
 import numpy as np
 from mpmath import mp
+from scipy.integrate import quad
+from scipy.optimize import root_scalar
 
 
 class Functions:
@@ -283,6 +285,59 @@ class Functions:
         
         else:
             raise ValueError("No variable is missing. Please leave one of Gamma_p, Delta_x, or r0 as None.")
+
+
+    # Solves for the missing value (theta_0, lambda_value, or L) in the given equation.
+    # @param theta_0 (float): The known value of θ₀ (must be in range of 0.1e-3 to 0.9e-12).
+    # @param lambda_value (float): The wavelength λ (must be in range of 0.1e-3 to 0.9e-8).
+    # @param L (float): The upper limit of the integral (must be in range of 1 to 13719818).
+    # @param cn_squared_func (function): A function Cn²(z) that describes the refractive index structure parameter as a function of z.
+    @staticmethod
+    def function21_74(theta_0=None, lambda_value=None, L=None):    
+        def cn_squared_func(z):
+            return 1e-14  # Example value, adjust as needed 
+
+        # Define the integral
+        def calculate_integral(L_val):
+            def integrand(z):
+                return cn_squared_func(z) * (z ** (5 / 3))
+            result, _ = quad(integrand, 0, L_val)
+            return result
+
+        # If solving for theta_0
+        if theta_0 is None:
+            if lambda_value is None or L is None:
+                raise ValueError("Both λ and L must be provided to solve for θ₀.")
+            integral_result = calculate_integral(L)
+            theta_0 = (58.1 * 10**-3 * lambda_value**(6/5)) * (integral_result**(-3/5))
+            return theta_0
+
+        # If solving for lambda_value
+        if lambda_value is None:
+            if theta_0 is None or L is None:
+                raise ValueError("Both θ₀ and L must be provided to solve for λ.")
+            integral_result = calculate_integral(L)
+
+            def lambda_equation(lam):
+                return theta_0 - (58.1 * 10**-3 * lam**(6/5)) * (integral_result**(-3/5))
+
+            result = root_scalar(lambda_equation, bracket=[1e-10, 1], method='bisect')
+            return result.root
+
+        # If solving for L
+        if L is None:
+            if theta_0 is None or lambda_value is None:
+                raise ValueError("Both θ₀ and λ must be provided to solve for L.")
+
+            def L_equation(L_val):
+                integral_result = calculate_integral(L_val)
+                return theta_0 - (58.1 * 10**-3 * lambda_value**(6/5)) * (integral_result**(-3/5))
+
+            result = root_scalar(L_equation, bracket=[1e-2, 1e6], method='bisect')
+            return result.root
+
+        # If none of the above, raise an error
+        raise ValueError("One of θ₀, λ, or L must be set to None (missing).")
 
     # Solves for any missing variable: phi, a_i, rho, or theta.
     # Depending on which variable is missing, it either computes the missing value 

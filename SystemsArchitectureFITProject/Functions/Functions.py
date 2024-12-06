@@ -282,7 +282,7 @@ class Functions:
     # @param r0 The given r0 value (optional)
     # @return The solved value of the missing variable.
     @staticmethod
-    def function_21_63(Gamma_p=None, Delta_x=None, r0=None):
+    def function21_63(Gamma_p=None, Delta_x=None, r0=None):
         mp.dps = 10  # Set precision level for mpmath
 
         # Check if solving for Gamma_p (if Delta_x and r0 are given)
@@ -381,6 +381,27 @@ class Functions:
 
         # If none of the above, raise an error
         raise ValueError("One of θ₀, λ, or L must be set to None (missing).")
+    
+    # Solves for the short exposure of optical transfer.
+    # @param f Frequency (The only perameter)
+    # @returns the solution of the equation
+    @staticmethod
+    def function21_78(f):
+        # Helper functions 
+        def O(f):
+            return np.sin(f)
+
+        def HSE(f):
+            return np.exp(-f)
+
+        def Ho(f):
+            return f**2
+        
+        # Compute the value of the equation
+        if f is not None:
+            return O(f) * HSE(f) * Ho(f)
+        else:
+            raise ValueError("Must provide value for f")
 
     # Solves for any missing variable: phi, a_i, rho, or theta.
     # Depending on which variable is missing, it either computes the missing value 

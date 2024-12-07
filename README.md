@@ -1,6 +1,6 @@
 # Systems Architecture Project, FIT 
 ## Libraries and Pre-requisites
-> Need scipy and numpy libraries installed<br />
+> Need scipy, mpmath, and numpy libraries installed<br />
 > When you have python properly installed and set up, run this for the libraries you need:<br />
 ```
 pip install scipy, numpy

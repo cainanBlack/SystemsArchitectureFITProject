@@ -1,9 +1,9 @@
 
-from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_19, FunctionsFor21_30, FunctionsFor21_32, FunctionsFor21_58, FunctionsFor21_59, FunctionsFor21_85
+from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_19, FunctionsFor21_30, FunctionsFor21_32, FunctionsFor21_33, FunctionsFor21_58, FunctionsFor21_59, FunctionsFor21_85
 import math
 from scipy.optimize import fsolve, root
 import numpy as np
-from mpmath import mp
+# from mpmath import mp
 from scipy.integrate import quad
 from scipy.optimize import root_scalar
 from scipy.special import jn  # Correctly importing the Bessel function
@@ -473,11 +473,11 @@ class Functions:
 
                 # If fx is missing, calculate fx
                 elif fx is None and Dx is not None and lambda_ is not None and Dy is None and fy is None :
-                    return FunctionsFor21_32.compute_fx(Hf, fy, lambda_, Dx)
+                    return FunctionsFor21_32.compute_fx(Hf, fy, lambda_, di,  Dx)
                 
                 # If fy is missing, calculate fy
                 elif fy is None and Dy is not None and lambda_ is not None and (Dx is None or fx is None) :
-                    return FunctionsFor21_32.compute_fy(Hf, fy, lambda_, Dx)
+                    return FunctionsFor21_32.compute_fy(Hf, lambda_, di,  Dy)
 
                 #at this point what is left to be solved                
                 else:
@@ -485,6 +485,58 @@ class Functions:
 
             else:
                 raise ValueError("You must provide di to solve any missing pieace.")
+
+
+    # Solve for the spread function provided in 21.33
+    # based on the provided known values. If any required variable is missing,
+    # the function will compute its value using the given equation.
+    # @param x: 
+    # @param y: 
+    # @param Dx: 
+    # @param Dy: 
+    # @param lambda_: 
+    # @param di: 
+    # @return: The computed value of the missing variable (x, y, Dx, Dy, lambda_, di).
+    # @throws ValueError: If insufficient information is provided to solve for the missing variable.
+    @staticmethod
+    def function21_33(sxy=None, x= None, y= None, Dx= None, Dy= None, lambda_= None, di= None):
+        if sxy is None:
+            if x is not None and y is not None and Dx is not None and Dy is not None and lambda_ is not None and di is not None:
+                # Calculate the intensity
+                factor = (Dx * Dy / (lambda_ * di))**2
+                sxy = factor * FunctionsFor21_33.sinc_squared(x * Dx / (lambda_ * di)) * FunctionsFor21_33.sinc_squared(y * Dy / (lambda_ * di))
+
+            return sxy
+
+        if lambda_ is None:
+            if x is not None and y is not None and Dx is not None and Dy is not None and sxy is not None and di is not None:
+                # Calculate the wavelength
+                return FunctionsFor21_33.computeLambda(sxy,x, y, Dx, Dy, di)
+
+        if di is None:
+            if x is not None and y is not None and Dx is not None and Dy is not None and sxy is not None and lambda_ is not None:
+                # Calculate the wavelength
+                return FunctionsFor21_33.compute_di(sxy,x, y, Dx, Dy, lambda_)
+
+        if Dx is None:
+            if x is not None and y is not None and di is not None and Dy is not None and sxy is not None and lambda_ is not None:
+                # Calculate the wavelength
+                return FunctionsFor21_33.Compute_Dx(sxy,x, y, di, Dy, lambda_)
+            
+        if Dy is None:
+            if x is not None and y is not None and di is not None and Dx is not None and sxy is not None and lambda_ is not None:
+                # Calculate the wavelength
+                return FunctionsFor21_33.Compute_Dx(sxy,x, y, di, Dx, lambda_)
+            
+        if x is None:
+            if Dx is not None and y is not None and di is not None and Dy is not None and sxy is not None and lambda_ is not None:
+                # Calculate the wavelength
+                return FunctionsFor21_33.Compute_x(sxy, y, di, Dx, Dy, lambda_)
+            
+        if y is None:
+            if Dx is not None and x is not None and di is not None and Dy is not None and sxy is not None and lambda_ is not None:
+                # Calculate the wavelength
+                return FunctionsFor21_33.Compute_y(sxy, x, di, Dx, Dy, lambda_)
 
 
     # Solve for the missing variable in the equation n_1 =  (77.6P / T) * 10^(-6)

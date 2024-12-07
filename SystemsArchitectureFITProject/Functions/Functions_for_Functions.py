@@ -4,6 +4,7 @@ import numpy as np
 from scipy.integrate import nquad
 from scipy.fft import fftn, ifftn, fftshift
 from scipy.optimize import minimize
+from scipy.optimize import fsolve
 
 class FunctionsFor21_19:
         
@@ -244,7 +245,195 @@ class FunctionsFor21_32:
         # Solve for Dy
         Dy = (fy * lambda_ * di) / (1 - Hf)
         return Dy
+
+class FunctionsFor21_33:
+    @staticmethod
+    def sinc_squared(u):
+        return np.sinc(u / np.pi)**2  # np.sinc(x) is sin(pi*x) / (pi*x)
+
+    @staticmethod
+    def computeLambda(s, x, y, Dx, Dy, di):
+        """
+        Solve for the wavelength (lambda) using numerical methods.
+
+        Parameters:
+            s (float): Intensity value s(x, y).
+            x (float): x-coordinate in the observation plane.
+            y (float): y-coordinate in the observation plane.
+            Dx (float): Aperture dimension in the x-direction.
+            Dy (float): Aperture dimension in the y-direction.
+            di (float): Distance parameter.
+
+        Returns:
+            float: Wavelength (lambda) in meters.
+        """
+
+        # Initial guess for lambda
+        lambda_guess = 500e-9  # Start with 500 nm (typical visible wavelength)
+
+        # Define the function to solve
+        def equation(lambda_):
+            factor = (Dx * Dy / (lambda_ * di))**2
+            sinc_x = np.sinc((x * Dx) / (lambda_ * di) / np.pi)**2
+            sinc_y = np.sinc((y * Dy) / (lambda_ * di) / np.pi)**2
+            return factor * sinc_x * sinc_y - s
         
+        # Solve the equation
+        lambda_solution, = fsolve(equation, lambda_guess)
+        return lambda_solution
+
+    @staticmethod
+    def compute_di(s, x, y, Dx, Dy, lambda_):
+        """
+        Solve for the distance parameter (d_i) using numerical methods.
+
+        Parameters:
+            s (float): Intensity value s(x, y).
+            x (float): x-coordinate in the observation plane.
+            y (float): y-coordinate in the observation plane.
+            Dx (float): Aperture dimension in the x-direction.
+            Dy (float): Aperture dimension in the y-direction.
+            lambda_ (float): Wavelength (meters).
+
+        Returns:
+            float: Distance parameter (d_i) in meters.
+        """
+        # Define the function to solve
+        def equation(d_i):
+            factor = (Dx * Dy / (lambda_ * d_i))**2
+            sinc_x = np.sinc((x * Dx) / (lambda_ * d_i) / np.pi)**2
+            sinc_y = np.sinc((y * Dy) / (lambda_ * d_i) / np.pi)**2
+            return factor * sinc_x * sinc_y - s
+
+        # Initial guess for d_i
+        di_guess = 1.0  # Start with 1 meter as an initial guess
+
+        # Solve the equation
+        di_solution, = fsolve(equation, di_guess)
+        return di_solution
+    
+    @staticmethod
+    def Compute_Dx(s, x, y, Dy, lambda_, di):
+        """
+        Solve for the aperture dimension D_x using numerical methods.
+
+        Parameters:
+            s (float): Intensity value s(x, y).
+            x (float): x-coordinate in the observation plane.
+            y (float): y-coordinate in the observation plane.
+            Dy (float): Aperture dimension in the y-direction.
+            lambda_ (float): Wavelength (meters).
+            di (float): Distance parameter (meters).
+
+        Returns:
+            float: Aperture dimension D_x in meters.
+        """
+        # Define the function to solve
+        def equation(Dx):
+            factor = (Dx * Dy / (lambda_ * di))**2
+            sinc_x = np.sinc((x * Dx) / (lambda_ * di) / np.pi)**2
+            sinc_y = np.sinc((y * Dy) / (lambda_ * di) / np.pi)**2
+            return factor * sinc_x * sinc_y - s
+
+        # Initial guess for Dx
+        Dx_guess = 0.01  # Start with 0.01 meters (1 cm) as an initial guess
+        
+        # Solve the equation
+        Dx_solution, = fsolve(equation, Dx_guess)
+        return Dx_solution
+
+    @staticmethod
+    def Compute_Dy(s, x, y, Dx, lambda_, di):
+        """
+        Solve for the aperture dimension D_y using numerical methods.
+
+        Parameters:
+            s (float): Intensity value s(x, y).
+            x (float): x-coordinate in the observation plane.
+            y (float): y-coordinate in the observation plane.
+            Dx (float): Aperture dimension in the x-direction.
+            lambda_ (float): Wavelength (meters).
+            di (float): Distance parameter (meters).
+
+        Returns:
+            float: Aperture dimension D_y in meters.
+        """
+        # Define the function to solve
+        def equation(Dy):
+            factor = (Dx * Dy / (lambda_ * di))**2
+            sinc_x = np.sinc((x * Dx) / (lambda_ * di) / np.pi)**2
+            sinc_y = np.sinc((y * Dy) / (lambda_ * di) / np.pi)**2
+            return factor * sinc_x * sinc_y - s
+
+        # Initial guess for Dy
+        Dy_guess = 0.01  # Start with 0.01 meters (1 cm) as an initial guess
+
+        # Solve the equation
+        Dy_solution, = fsolve(equation, Dy_guess)
+        return Dy_solution
+
+    @staticmethod
+    def Compute_x(s, y, Dx, Dy, lambda_, di):
+        """
+        Solve for the x-coordinate in the observation plane.
+
+        Parameters:
+            s (float): Intensity value s(x, y).
+            y (float): y-coordinate in the observation plane.
+            Dx (float): Aperture dimension in the x-direction.
+            Dy (float): Aperture dimension in the y-direction.
+            lambda_ (float): Wavelength (meters).
+            di (float): Distance parameter (meters).
+
+        Returns:
+            float: x-coordinate in meters.
+        """
+        # Precompute constant terms
+        k = s * (lambda_ * di)**2 / (Dx * Dy * np.sinc((y * Dy) / (lambda_ * di) / np.pi)**2)
+
+        # Define the equation to solve
+        def equation(x):
+            arg = (x * Dx) / (lambda_ * di)
+            return (np.sinc(arg / np.pi)**2) - k
+
+        # Initial guess for x
+        x_guess = 0.001  # Start with a small value as an initial guess
+        
+        # Solve the equation
+        x_solution, = fsolve(equation, x_guess)
+        return x_solution
+    
+    @staticmethod
+    def Compute_y(s, x, Dx, Dy, lambda_, di):
+        """
+        Solve for the y-coordinate in the observation plane.
+
+        Parameters:
+            s (float): Intensity value s(x, y).
+            x (float): x-coordinate in the observation plane.
+            Dx (float): Aperture dimension in the x-direction.
+            Dy (float): Aperture dimension in the y-direction.
+            lambda_ (float): Wavelength (meters).
+            di (float): Distance parameter (meters).
+
+        Returns:
+            float: y-coordinate in meters.
+        """
+        # Precompute constant terms
+        k = s * (lambda_ * di)**2 / (Dx * Dy * np.sinc((x * Dx) / (lambda_ * di) / np.pi)**2)
+
+        # Define the equation to solve
+        def equation(y):
+            arg = (y * Dy) / (lambda_ * di)
+            return (np.sinc(arg / np.pi)**2) - k
+
+        # Initial guess for y
+        y_guess = 0.001  # Start with a small value as an initial guess
+        
+        # Solve the equation
+        y_solution, = fsolve(equation, y_guess)
+        return y_solution
+    
 class FunctionsFor21_85:
     
     # Compute the value of phi based on the formula:

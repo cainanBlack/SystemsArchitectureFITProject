@@ -448,57 +448,35 @@ class Functions:
             raise ValueError("Must be missing a variable to solve for.")
 
     # Solves the Kolmogorov Power Spectral Density (V-variant) Φ_n^V(K) equation for a missing variable.
-    # @param missing (str): The variable to solve for ('Phi', 'C_n', 'K', 'L_0', or 'K_m'), or None if no variable is missing
     # @param Phi (float): Power spectral density Φ_n^V(K) (optional if solving for Phi)
     # @param C_n (float): Refractive index structure constant (optional if solving for C_n)
-    # @param K (float): Wavenumber (optional if solving for K)
-    # @param L_0 (float): Outer scale of turbulence (optional if solving for L_0)
-    # @param K_m (float): Cutoff wavenumber (optional if solving for K_m)
+    # @param K (float): Wavenumber (Constant not to be solved for)
+    # @param K_0 (float): Outer scale of turbulence (Constant not to be solved for)
+    # @param K_m (float): Cutoff wavenumber (Constant not to be solved for)
     # @return float: The calculated value of the missing variable or the result if no variable is missing
     @staticmethod
-    def function21_48(missing=None, Phi=None, C_n=None, K=None, L_0=None, K_m=None):
+    def function21_48(Phi=None, C_n=None, K=None, K_0=None, K_m=None):
         
-        # Validate input
-        if missing not in ['Phi', 'C_n', 'K', 'L_0', 'K_m']:
-            raise ValueError("Invalid variable to solve for. Choose 'Phi', 'C_n', 'K', 'L_0', or 'K_m'.")
-
-        # Calculate K_0 = 2π / L_0 if L_0 is provided
-        K_0 = 2 * math.pi / L_0 if L_0 is not None else None
-
-        if missing == 'Phi':
-            if C_n is None or K is None or L_0 is None or K_m is None:
-                raise ValueError("C_n, K, L_0, and K_m must be provided to solve for Phi.")
-            numerator = 0.033 * (C_n**2) * (K**(-11/6))
-            denominator = (K**2 + (2 * math.pi / L_0)**2)**(11/6)
-            exponential = math.exp(-K**2 / K_m**2)
-            return numerator / denominator * exponential
-
-        elif missing == 'C_n':
-            if Phi is None or K is None or L_0 is None or K_m is None:
-                raise ValueError("Phi, K, L_0, and K_m must be provided to solve for C_n.")
-            denominator = (K**2 + (2 * math.pi / L_0)**2)**(11/6)
-            exponential = math.exp(-K**2 / K_m**2)
-            return math.sqrt((Phi * denominator / exponential) / (0.033 * K**(-11/6)))
-
-        elif missing == 'K':
-            if Phi is None or C_n is None or L_0 is None or K_m is None:
-                raise ValueError("Phi, C_n, L_0, and K_m must be provided to solve for K.")
-            raise NotImplementedError("Solving for K is complex and requires numerical methods.")
-
-        elif missing == 'L_0':
-            if Phi is None or C_n is None or K is None or K_m is None:
-                raise ValueError("Phi, C_n, K, and K_m must be provided to solve for L_0.")
-            denominator = (Phi / (0.033 * (C_n**2) * (K**(-11/6)))) * math.exp(K**2 / K_m**2)
-            K_0_squared = (K**2 + denominator**(6/11))
-            return 2 * math.pi / math.sqrt(K_0_squared - K**2)
-
-        elif missing == 'K_m':
-            if Phi is None or C_n is None or K is None or L_0 is None:
-                raise ValueError("Phi, C_n, K, and L_0 must be provided to solve for K_m.")
-            denominator = (K**2 + (2 * math.pi / L_0)**2)**(11/6)
-            numerator = Phi * denominator / (0.033 * (C_n**2) * (K**(-11/6)))
-            return math.sqrt(-K**2 / math.log(numerator))
-
+        if Phi is None:
+            if C_n is not None and K is not None and K_0 is not None and K_m is not None:
+                numerator = 0.33 * C_n**2
+                denominator = (K**2 + K_0**2)**(11*6)
+                exponential = math.exp(-((K**2)/(K_m**2)))
+                Phi = ((numerator * exponential) / denominator)
+                return Phi
+            else:
+                raise ValueError("Not Valid 1") 
+        
+        elif C_n is None:
+            if Phi is not None and K is not None and K_0 is not None and K_m is not None:
+                C_n = math.sqrt((Phi * (K**2 + K_0**2)**11/6)/ math.exp(-(K**2/K_m**2) * 0.033))
+                return C_n
+            else:
+                raise ValueError("Not Valid 2")
+            
+        elif K or K_0 or K_m is not None:
+            raise NotImplementedError("Constant provided by another equation not solved for here.")           
+                
         else:
             raise ValueError("Invalid variable to solve for.")
         

@@ -3,7 +3,7 @@
 > Need scipy, mpmath, and numpy libraries installed<br />
 > When you have python properly installed and set up, run this for the libraries you need:<br />
 ```
-pip install scipy, numpy
+pip install scipy, numpy, mpmath
 ```
 ## To start using (How I do it anyways)
 - **Download _git bash_**

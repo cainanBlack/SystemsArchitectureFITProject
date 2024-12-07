@@ -817,17 +817,8 @@ class Functions:
     # @param lambda_old (float): The old wavelength (optional if solving for lambda_old)
     # @return float: The calculated value of the missing variable
     @staticmethod
-<<<<<<< Updated upstream
-    def function21_68(missing, r_new=None, r_old=None, lambda_new=None, lambda_old=None): #TODO NOTE REMOVE MISSING VALUE PLZ
-        
-        # Validate input
-        if missing not in ['r_new', 'r_old', 'lambda_new', 'lambda_old']:
-            raise ValueError("Invalid variable to solve for. Choose 'r_new', 'r_old', 'lambda_new', or 'lambda_old'.")
-        
-=======
     def function21_68(r_new=None, r_old=None, lambda_new=None, lambda_old=None):
-         
->>>>>>> Stashed changes
+
         # Solve for r_new
         if r_new is None:
             if r_old is not None or lambda_new is not None or lambda_old is not None:

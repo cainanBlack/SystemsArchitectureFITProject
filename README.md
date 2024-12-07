@@ -1,5 +1,6 @@
 # Systems Architecture Project, FIT 
 ## Libraries and Pre-requisites
+> Need python installed <br />
 > Need scipy, mpmath, and numpy libraries installed<br />
 > When you have python properly installed and set up, run this for the libraries you need:<br />
 ```
@@ -30,3 +31,9 @@ git pull origin main
 ```
 Once you have completed these steps, you should be able to open eclipse and find the use the files.
 Msg me on Discord if you have any questions :smile::+1:
+
+## How to run:
+All you should have to do is type this in your terminal (or cmd) at the folder this exists:
+```
+Function_GUI.py
+```

@@ -85,6 +85,166 @@ class FunctionsFor21_30:
 
         return H_f
 
+class FunctionsFor21_32:
+    @staticmethod
+    def triangular(x):
+        """
+        Triangular function, defined as:
+        tri(x) = 1 - |x| for |x| <= 1
+                0       otherwise
+        """
+
+        if abs(x) <= 1:
+            return 1 - abs(x)
+        else:
+            return 0
+
+    @staticmethod
+    def compute_Lambda(fx, fy, di, Dx, Dy):
+        """
+        Solve for the maximum allowable wavelength (lambda) given the constraints.
+
+        Parameters:
+        fx (float): Spatial frequency in the x-direction.
+        fy (float): Spatial frequency in the y-direction.
+        di (float): Propagation distance.
+        Dx (float): Characteristic dimension in the x-direction.
+        Dy (float): Characteristic dimension in the y-direction.
+
+        Returns:
+        float: Maximum wavelength (lambda) that satisfies the constraints.
+        """
+
+        lambda_x = Dx / (fx * di) if fx != 0 else float('inf')
+        lambda_y = Dy / (fy * di) if fy != 0 else float('inf')
+        return min(lambda_x, lambda_y)
+    
+    @staticmethod
+    def compute_fx(Hf, lambda_, di, Dx):
+        """
+        Solve for spatial frequency fx given the triangular function constraints.
+
+        Parameters:
+        H_value (float): Value of the transfer function H(fx, fy) (from 0 to 1).
+        lambda_ (float): Wavelength.
+        di (float): Propagation distance.
+        Dx (float): Characteristic dimension in x-direction.
+
+        Returns:
+        tuple: Range of possible values for fx (minimum and maximum).
+        """
+        if Hf < 0 or Hf > 1:
+            raise ValueError("H(f with bar) must be in the range [0, 1].")
+
+        # Compute the maximum allowed value for fx based on the constraints
+        max_fx = Dx / (lambda_ * di)
+
+        # Solve for fx when H_value is provided
+        fx = (1 - Hf) * (Dx / (lambda_ * di))
+        return  fx
+    
+    @staticmethod
+    def compute_fy(Hf, lambda_, di, Dy):
+        """
+        Solve for spatial frequency fy given the triangular function constraints.
+
+        Parameters:
+        H_value (float): Value of the transfer function H(fx, fy) (from 0 to 1).
+        lambda_ (float): Wavelength.
+        di (float): Propagation distance.
+        Dy (float): Characteristic dimension in y-direction.
+
+        Returns:
+        tuple: Range of possible values for fy (minimum and maximum).
+        """
+        if Hf < 0 or Hf > 1:
+            raise ValueError("H_value must be in the range [0, 1].")
+
+        # Compute the maximum allowed value for fy based on the constraints
+        max_fy = Dy / (lambda_ * di)
+
+        # Solve for fy when H_value is provided
+        fy = (1 - Hf) * (Dy / (lambda_ * di))
+        return -max_fy, fy
+    
+    @staticmethod
+    def compute_di(Hf, fx, fy, lambda_, Dx, Dy):
+        """
+        Solve for the propagation distance di given the triangular function constraints.
+
+        Parameters:
+        H_value (float): Value of the transfer function H(fx, fy) (from 0 to 1).
+        fx (float): Spatial frequency in the x-direction.
+        fy (float): Spatial frequency in the y-direction.
+        lambda_ (float): Wavelength.
+        Dx (float): Characteristic dimension in x-direction.
+        Dy (float): Characteristic dimension in y-direction.
+
+        Returns:
+        float: Propagation distance di that satisfies the equation.
+        """
+        if Hf < 0 or Hf > 1:
+            raise ValueError("H_value must be in the range [0, 1].")
+        if fx == 0 or fy == 0:
+            raise ValueError("fx and fy must be non-zero.")
+
+        # Solve for di using the H_value
+        di_x = (1 - Hf) * (Dx / (fx * lambda_))
+        di_y = (1 - Hf) * (Dy / (fy * lambda_))
+
+        # Return the minimum propagation distance satisfying both x and y constraints
+        return min(di_x, di_y)
+    
+    @staticmethod
+    def compute_Dx(Hf, fx, lambda_, di):
+        """
+        Solve for the characteristic dimension Dx in the x-direction.
+
+        Parameters:
+        H_value (float): Value of the transfer function H(fx, fy) (from 0 to 1).
+        fx (float): Spatial frequency in the x-direction.
+        lambda_ (float): Wavelength.
+        di (float): Propagation distance.
+
+        Returns:
+        float: Characteristic dimension Dx that satisfies the equation.
+        """
+        if Hf < 0 or Hf > 1:
+            raise ValueError("H_value must be in the range [0, 1].")
+        if fx == 0:
+            raise ValueError("fx must be non-zero to solve for Dx.")
+        if Hf == 1:
+            raise ValueError("H_value cannot be 1, as it leads to division by zero.")
+
+        # Solve for Dx
+        Dx = (fx * lambda_ * di) / (1 - Hf)
+        return Dx
+    
+    @staticmethod
+    def compute_Dy(Hf, fy, lambda_, di):
+        """
+        Solve for the characteristic dimension Dy in the y-direction.
+
+        Parameters:
+        H_value (float): Value of the transfer function H(fx, fy) (from 0 to 1).
+        fy (float): Spatial frequency in the y-direction.
+        lambda_ (float): Wavelength.
+        di (float): Propagation distance.
+
+        Returns:
+        float: Characteristic dimension Dy that satisfies the equation.
+        """
+        if Hf < 0 or Hf > 1:
+            raise ValueError("H_value must be in the range [0, 1].")
+        if fy == 0:
+            raise ValueError("fy must be non-zero to solve for Dy.")
+        if Hf == 1:
+            raise ValueError("H_value cannot be 1, as it leads to division by zero.")
+
+        # Solve for Dy
+        Dy = (fy * lambda_ * di) / (1 - Hf)
+        return Dy
+        
 class FunctionsFor21_85:
     
     # Compute the value of phi based on the formula:

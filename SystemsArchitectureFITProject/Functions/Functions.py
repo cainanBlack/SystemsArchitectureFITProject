@@ -1,8 +1,9 @@
-from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_19, FunctionsFor21_30, FunctionsFor21_58, FunctionsFor21_59, FunctionsFor21_85
+
+from SystemsArchitectureFITProject.Functions.Functions_for_Functions import FunctionsFor21_19, FunctionsFor21_30, FunctionsFor21_32, FunctionsFor21_58, FunctionsFor21_59, FunctionsFor21_85
 import math
 from scipy.optimize import fsolve, root
 import numpy as np
-from mpmath import mp
+# from mpmath import mp
 from scipy.integrate import quad
 from scipy.optimize import root_scalar
 
@@ -373,6 +374,68 @@ class Functions:
 
         else:
             raise ValueError("One variable must be missing to solve for it.")
+
+    # Solve for the optical transfer function equation 
+    # where I(f), O(f), and H(f) may be known, and one is missing.
+    # This function solves for the missing variable, either I(f) or  O(f) or H(f).
+    # based on the provided known values. If any required variable is missing,
+    # the function will compute its value using the given equation.
+    # @param I_f: Known image spectrum. If None, the function will solve for it.
+    # @param O_f: Known object radiant emittance. If None, the function will solve for it.
+    # @param H_f: Known optical transfer function. If None, the function will solve for it.
+    # @return: The computed value of the missing variable (I_f, O_f, H_f).
+    # @throws ValueError: If insufficient information is provided to solve for the missing variable.
+    @staticmethod
+    def function21_32(Hf = None, fx=None, fy=None, lambda_=None, di=None, Dx=None, Dy=None):
+        # If  Hf is missing, calculate  Hf
+        if Hf is None:
+            if fx is not None and fy is not None and lambda_ is not None and di is not None and  Dx is not None and  Dy is not None:
+
+                tri_x = FunctionsFor21_32.triangular((fx * lambda_ * di) / Dx)
+                tri_y = FunctionsFor21_32.triangular((fy * lambda_ * di) / Dy)
+                
+                return  tri_x * tri_y
+            
+            # If lamba is missing, calculate lamba
+            elif lambda_ is None and fx is not None and fy is not None and di is not None and Dx is not None and Dy is not None:
+                return FunctionsFor21_32.compute_Lambda(fx, fy, di, Dx, Dy)
+            
+            else:
+                raise ValueError("You must provide fx, fy, lambda, di, Dx, Dy to solve for H_f.")
+
+        elif Hf is not None:
+
+            # if Dx is None and Dy is None:
+            #     raise ValueError("You must provide Dx or Dy to solve any missing pieace.")
+
+            # If di is missing, calculate Dx
+            if di is None and fx is not None and fy is not None and lambda_ is not None and Dx is not None and Dy is not None :
+                return FunctionsFor21_32.compute_di(Hf, fx, fy, lambda_, Dx, Dy)
+
+            elif di is not None:
+                # If Dx is missing, calculate Dx
+                if Dx is None and fx is not None and lambda_ is not None and fy is None and Dy is None: 
+                    return FunctionsFor21_32.compute_Dx(Hf, fx, lambda_, di)
+                
+                # If Dy is missing, calculate Dy
+                elif Dy is None and fy is not None and lambda_ is not None and Dx is None and fx is None :
+                    return FunctionsFor21_32.compute_Dy(Hf, fy, lambda_, di)
+
+                # If fx is missing, calculate fx
+                elif fx is None and Dx is not None and lambda_ is not None and Dy is None and fy is None :
+                    return FunctionsFor21_32.compute_fx(Hf, fy, lambda_, Dx)
+                
+                # If fy is missing, calculate fy
+                elif fy is None and Dy is not None and lambda_ is not None and (Dx is None or fx is None) :
+                    return FunctionsFor21_32.compute_fy(Hf, fy, lambda_, Dx)
+
+                #at this point what is left to be solved                
+                else:
+                    raise ValueError("You must provide di to solve any missing pieace.")
+
+            else:
+                raise ValueError("You must provide di to solve any missing pieace.")
+
 
     # Solve for the missing variable in the equation n_1 =  (77.6P / T) * 10^(-6)
     # where n_1, P, and T may be known, and one is missing.

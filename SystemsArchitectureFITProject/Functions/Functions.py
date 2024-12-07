@@ -6,8 +6,7 @@ import numpy as np
 from mpmath import mp
 from scipy.integrate import quad
 from scipy.optimize import root_scalar
-
-
+from scipy.special import jn  # Correctly importing the Bessel function
 
 class Functions:
     
@@ -91,7 +90,58 @@ class Functions:
                 return theta_x
             else:
                 raise ValueError("You must provide gpf and wp to solve for theta_x")   
-            
+    
+    # Solve for any missing variable in the equation:
+    # h(r) = (D / (2 * lamda * d_i))^2 * J1((2 * pi * r * D) / (2 * lamda * d_i))
+    # Arguments:
+    # @param h     The value of h(r), can be None if solving for h.
+    # @param r     The value of radius r, can be None if solving for r.
+    # @param D     The value of diameter D, can be None if solving for D.
+    # @param lamda The wavelength (lambda), can be None if solving for lambda.
+    # @param d_i The diameter of the disk, can be None if solving for d_i.
+    # Returns:
+    # The solved value for the unknown variable.
+    @staticmethod
+    def function21_29(h=None, r=None, D=None, lamda=None, d_i=None):
+        # Check if any of the required variables are missing
+        if (h is None and r is None) or (h is None and D is None) or (h is None and lamda is None) or (h is None and d_i is None):
+            raise ValueError("At least one variable must be provided")
+    
+        # Define the equation in terms of the unknown variable
+        def equation_to_solve(var_value):
+            if h is not None and r is None:
+                # Solve for r
+                equation = (D / (2 * lamda * d_i))**2 * jn(1, (2 * np.pi * var_value * D) / (2 * lamda * d_i)) - h
+            elif h is not None and D is None:
+                # Solve for D
+                equation = (var_value / (2 * lamda * d_i))**2 * jn(1, (2 * np.pi * r * var_value) / (2 * lamda * d_i)) - h
+            elif h is not None and lamda is None:
+                # Solve for lamda
+                equation = (D / (2 * var_value * d_i))**2 * jn(1, (2 * np.pi * r * D) / (2 * var_value * d_i)) - h
+            elif h is not None and d_i is None:
+                # Solve for d_i
+                equation = (D / (2 * lamda * var_value))**2 * jn(1, (2 * np.pi * r * D) / (2 * lamda * var_value)) - h
+            elif r is not None and h is None:
+                # Solve for h
+                equation = (D / (2 * lamda * d_i))**2 * jn(1, (2 * np.pi * r * D) / (2 * lamda * d_i)) - var_value
+            return equation
+    
+        # Initial guess for the unknown variable (use current known value for initial guess)
+        if r is not None:
+            initial_guess = r
+        elif D is not None:
+            initial_guess = D
+        elif lamda is not None:
+            initial_guess = lamda
+        elif d_i is not None:
+            initial_guess = d_i
+        else:
+            raise ValueError("At least one variable must be provided")
+    
+        # Solve the equation using fsolve
+        solved_value = fsolve(equation_to_solve, initial_guess)
+        return solved_value[0]
+
     # Solve for the missing variable or coordinates in the equations delta_x = (lambda_ * z) / d_x and delta_y = (lambda_ * z) / d_y
     # Where delta_x, delta_y, lambda, z, d_y, and d_x may be known and one is missing. delta_x and delta_y may both be missing if the rest
     # of the variables are known. This function solves for each variable based on the provided known values. If any required variable(s) is missing,

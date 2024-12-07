@@ -16,6 +16,7 @@ class FunctionSolverApp:
         self.func21_18_button = tk.Button(self.root, text="Solve Function 21_18", command=self.solve_function21_18)
         self.func21_18_button.grid(row=0, column=0, padx=250, pady=10)
         
+        # Function to solve for missing variables in 21_29
         self.func21_29_button = tk.Button(self.root, text="Solve Function 21_29", command=self.solve_function21_29)
         self.func21_29_button.grid(row=1, column=0, padx=250, pady=10)
 
@@ -53,30 +54,49 @@ class FunctionSolverApp:
         # Function to solve for missing variables in 21_78
         self.func21_104_button = tk.Button(self.root, text="Solve Function 21_78", command=self.solve_function21_78)
         self.func21_104_button.grid(row=10, column=0, padx=250, pady=10)
-
-        # Function to solve for missing variables in 21_85
-        self.func21_85_button = tk.Button(self.root, text="Solve Function 21_85", command=self.solve_function21_85)
-        self.func21_85_button.grid(row=11, column=0, padx=250, pady=10)
+        
+        #TODO: implement this function
+        # # Function to solve for missing variables in 21_85
+        # self.func21_85_button = tk.Button(self.root, text="Solve Function 21_85", command=self.solve_function21_85)
+        # self.func21_85_button.grid(row=11, column=0, padx=250, pady=10)
 
         # Function to solve for missing variables in 21_104
         self.func21_104_button = tk.Button(self.root, text="Solve Function 21_104", command=self.solve_function21_104)
-        self.func21_104_button.grid(row=12, column=0, padx=10, pady=10)
+        self.func21_104_button.grid(row=12, column=0, padx=250, pady=10)
         
         # Function to solve for missing variables in 21_19
         self.func21_19_button = tk.Button(self.root, text="Solve Function 21_19", command=self.solve_function21_19)
-        self.func21_19_button.grid(row=13, column=0, padx=10, pady=10)
+        self.func21_19_button.grid(row=13, column=0, padx=250, pady=10)
         
         # Function to solve for missing variables in 21_38
         self.func21_38_button = tk.Button(self.root, text="Solve Function 21_38", command=self.solve_function21_38)
-        self.func21_38_button.grid(row=14, column=0, padx=10, pady=10)
+        self.func21_38_button.grid(row=14, column=0, padx=250, pady=10)
         
         # Function to solve for missing variables in 21_39
         self.func21_39_button = tk.Button(self.root, text="Solve Function 21_39", command=self.solve_function21_39)
-        self.func21_39_button.grid(row=15, column=0, padx=10, pady=10)
+        self.func21_39_button.grid(row=15, column=0, padx=250, pady=10)
         
         # Function to solve for missing variables in 21_40
         self.func21_40_button = tk.Button(self.root, text="Solve Function 21_40", command=self.solve_function21_40)
-        self.func21_40_button.grid(row=16, column=0, padx=10, pady=10)
+        self.func21_40_button.grid(row=16, column=0, padx=250, pady=10)
+        
+        # Function to solve for missing variables in 21_32
+        self.func21_32_button = tk.Button(self.root, text="Solve Function 21_32", command=self.solve_function21_32)
+        self.func21_32_button.grid(row=17, column=0, padx=250, pady=10)
+        
+        # Function to solve for missing variables in 21_33
+        self.func21_33_button = tk.Button(self.root, text="Solve Function 21_33", command=self.solve_function21_33)
+        self.func21_33_button.grid(row=18, column=0, padx=250, pady=10)
+        
+        # Function to solve for missing variables in 21_45
+        self.func21_45_button = tk.Button(self.root, text="Solve Function 21_45", command=self.solve_function21_45)
+        self.func21_45_button.grid(row=19, column=0, padx=250, pady=10)
+        
+        # Function to solve for missing variables in 21_48
+        self.func21_48_button = tk.Button(self.root, text="Solve Function 21_48", command=self.solve_function21_48)
+        self.func21_48_button.grid(row=20, column=0, padx=250, pady=10)
+        
+        
 
 
     def solve_function21_18(self):
@@ -122,10 +142,11 @@ class FunctionSolverApp:
     def solve_function21_78(self):
         # Create input dialog for function 21_78
         self.open_input_dialog("function21_78")
-
-    def solve_function21_85(self):
-        # Create input dialog for function 21_85
-        self.open_input_dialog("function21_85")
+        
+    #TODO: implement this function
+    # def solve_function21_85(self):
+    #     # Create input dialog for function 21_85
+    #     self.open_input_dialog("function21_85")
 
     def solve_function21_104(self):
         # Create input dialog for function 21_104
@@ -146,6 +167,22 @@ class FunctionSolverApp:
     def solve_function21_40(self):
         # Create input dialog for function 21_40
         self.open_input_dialog("function21_40")
+
+    def solve_function21_32(self):
+        # Create input dialog for function 21_32
+        self.open_input_dialog("function21_32")
+
+    def solve_function21_33(self):
+        # Create input dialog for function 21_33
+        self.open_input_dialog("function21_33")
+        
+    def solve_function21_45(self):
+        # Create input dialog for function 21_45
+        self.open_input_dialog("function21_45")
+        
+    def solve_function21_48(self):
+        # Create input dialog for function 21_48
+        self.open_input_dialog("function21_48")
 
     def open_input_dialog(self, func_name):
         # Open dialog box to input parameters for the given function
@@ -184,8 +221,9 @@ class FunctionSolverApp:
                     result = Functions.function21_74(**values)
                 elif func_name == "function21_78":
                     result = Functions.function21_78(**values)
-                elif func_name == "function21_85":
-                    result = Functions.function21_85(**values)
+                #TODO: implement list for values of a in this function
+                # elif func_name == "function21_85":
+                #     result = Functions.function21_85(**values)
                 elif func_name == "function21_104":
                     result = Functions.function21_104(**values)
                 elif func_name == "function21_19":
@@ -196,7 +234,15 @@ class FunctionSolverApp:
                     result = Functions.function21_39(delta_theta_d_x=values.get('delta_theta_d_x (Can solve for both this and delta_theta_d_y if both are blank)'), delta_theta_d_y=values.get('delta_theta_d_y (Can solve for both this and delta_theta_d_x if both are blank)'), lambda_=values.get('lambda_'), d_x=values.get('d_x'), d_y=values.get('d_y'))
                 elif func_name == "function21_40":
                     result = Functions.function21_40(delta_r_d=values.get('delta_r_d (Can solve for both this and delta_theta_d if both are blank)'), delta_theta_d=values.get('delta_theta_d (Can solve for both this and delta_r_d if both are blank)'), lambda_=values.get('lambda_'), z=values.get('z'), d=values.get('d'))
-        
+                elif func_name == "function21_32":
+                    result = Functions.function21_32(**values)
+                elif func_name == "function21_33":
+                    result = Functions.function21_33(**values)
+                elif func_name == "function21_45":
+                    result = Functions.function21_45(**values)
+                elif func_name == "function21_48":
+                    result = Functions.function21_48(**values)                
+                
                 # Show the result
                 messagebox.showinfo("Result", f"The result is: {result}")
             except ValueError as e:
@@ -232,8 +278,9 @@ class FunctionSolverApp:
             labels = ["theta_0", "lambda_value", "L"]
         elif func_name == "function21_78":
             labels = ["I_SE", "O", "H_SE", "H_0"]
-        elif func_name == "function21_85":
-            labels = ["phi", "a", "rho", "theta", "Z"]
+        #TODO: implement this function
+        # elif func_name == "function21_85":
+        #     labels = ["phi", "a (format: comma sperated numbers or decimals in bracets. \"[x,x,x]\")", "rho", "theta", "Z"]
         elif func_name == "function21_104":
             labels = ["h_f", "o_n_f", "k_bar", "var_h_f", "p_sigma_n_squared"]
         elif func_name == "function21_19":
@@ -244,6 +291,14 @@ class FunctionSolverApp:
             labels = ["delta_theta_d_x (Can solve for both this and delta_theta_d_y if both are blank)", "delta_theta_d_y (Can solve for both this and delta_theta_d_x if both are blank)", "lambda_", "d_x", "d_y"]
         elif func_name == "function21_40":
             labels = ["delta_r_d (Can solve for both this and delta_theta_d if both are blank)", "delta_theta_d (Can solve for both this and delta_r_d if both are blank)", "lambda_", "z", "d"]
+        elif func_name == "function21_32":
+            labels = ["Hf", "fx", "fy", "lambda_", "di", "Dx", "Dy"]
+        elif func_name == "function21_33":
+            labels = ["sxy", "x", "y", "Dx", "Dy", "lambda_", "di"]
+        elif func_name == "function21_45":
+            labels = ["Phi", "C_n", "K"]
+        elif func_name == "function21_48":
+            labels = ["Phi", "C_n", "K", "K_0", "K_m"]
 
         for i, label in enumerate(labels):
             tk.Label(input_window, text=label).grid(row=i, column=0, padx=150, pady=5)

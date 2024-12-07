@@ -32,7 +32,7 @@ git pull origin main
 Once you have completed these steps, you should be able to open eclipse and find the use the files.
 Msg me on Discord if you have any questions :smile::+1:
 
-## How to run:
+## How to run after meet prerequsites:
 All you should have to do is type this in your terminal (or cmd) at the folder this exists:
 ```
 Function_GUI.py

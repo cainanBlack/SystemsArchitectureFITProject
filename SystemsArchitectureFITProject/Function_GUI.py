@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from SystemsArchitectureFITProject.Functions.Functions import Functions
+import re as reZero
 
 class FunctionSolverApp:
     def __init__(self, root):
@@ -152,7 +153,12 @@ class FunctionSolverApp:
             values = {key: entry.get() for key, entry in entry_widgets.items()}
         
             # Explicitly replace 'lambda' with 'lambda_param'
-            values = {('lambda_param' if key == 'lambda' else key): (float(val) if val else None) for key, val in values.items()}
+            if func_name == "function21_58":
+                values = {('k (format: comma sperated numbers or decimals in parenthesis. \"(x,x,x)\")'):(tuple(float(x) for x in values.get('k (format: comma sperated numbers or decimals in parenthesis. \"(x,x,x)\")')[1:-1].split(',')) if values.get('k (format: comma sperated numbers or decimals in parenthesis. \"(x,x,x)\")') else ()),
+                          ('r (format: comma sperated numbers or decimals in bracets. \"[x,x,x]\")'):(list(float(y) for y in values.get('r (format: comma sperated numbers or decimals in bracets. \"[x,x,x]\")')[1:-1].split(',')) if values.get('r (format: comma sperated numbers or decimals in bracets. \"[x,x,x]\")') else []),
+                          ('gamma_n'):(float(values.get('gamma_n')) if values.get('gamma_n') else None)}
+            else:
+                values = {('lambda_param' if key == 'lambda' else key): (float(val) if val else None) for key, val in values.items()}
         
             try:
                 # Call the function with the corrected argument names
@@ -167,7 +173,7 @@ class FunctionSolverApp:
                 elif func_name == "function21_52":
                     result = Functions.function21_52(**values)
                 elif func_name == "function21_58":
-                    result = Functions.function21_58(**values)
+                    result = Functions.function21_58(k=values.get('k (format: comma sperated numbers or decimals in parenthesis. \"(x,x,x)\")'), r=values.get('r (format: comma sperated numbers or decimals in bracets. \"[x,x,x]\")'), gamma_n=values.get("gamma_n"))
                 elif func_name == "function21_59":
                     result = Functions.function21_59(**values)
                 elif func_name == "function21_63":
@@ -215,7 +221,7 @@ class FunctionSolverApp:
         elif func_name == "function21_52":
             labels = ["h", "v", "A", "Cn2_value"]
         elif func_name == "function21_58":
-            labels = ["k", "r", "gamma_n"]
+            labels = ["k (format: comma sperated numbers or decimals in parenthesis. \"(x,x,x)\")", "r (format: comma sperated numbers or decimals in bracets. \"[x,x,x]\")", "gamma_n"]
         elif func_name == "function21_59":
             labels = ["phi", "gamma", "k"]
         elif func_name == "function21_63":

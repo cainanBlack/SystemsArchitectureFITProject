@@ -665,14 +665,14 @@ class Functions:
     # @param gamma_n (complex) The value of Γₙ(r)
     # @return: The computed value of the equation
     @staticmethod
-    def function21_58(r=None, gamma_n=None, k=None):
+    def function21_58(r=[], gamma_n=None, k=()):
 
         def phi_n(k):
             # Example Φₙ(k⃗): Gaussian form
             return np.exp(-np.linalg.norm(k)**2)
 
         if gamma_n is None:
-            if k is not None and r is not None:
+            if k != () and r != []:
                 if type(k) is not tuple:
                     raise ValueError("Incorrect type for K! Entered: ", type(k), ", Required: tuple")
                 if type(r) is not list:
@@ -682,8 +682,8 @@ class Functions:
             else:
                 raise ValueError("phi_n and r are required to solve for gamma_n.")
 
-        elif k is None:
-            if r is not None and gamma_n is not None:
+        elif k == ():
+            if r != [] and gamma_n is not None:
                 if type(gamma_n) is not complex and type(gamma_n) is not int and type(gamma_n) is not float:
                     raise ValueError("Incorrect type for gamma_n! Entered: ", type(gamma_n), ", Required: complex, int, or float")
                 if type(r) is not list:
@@ -693,8 +693,8 @@ class Functions:
             else:
                 raise ValueError("r and gamma_n are required to solve for phi_n.")
 
-        elif r is None:
-            if k is not None and gamma_n is not None:
+        elif r == []:
+            if k != () and gamma_n is not None:
                 if type(k) is not tuple:
                     raise ValueError("Incorrect type for K! Entered: ", type(k), ", Required: tuple")
                 if type(gamma_n) is not complex and type(gamma_n) is not int and type(gamma_n) is not float:

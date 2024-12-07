@@ -6,7 +6,7 @@ functions = Functions()
 
 testGamma_n = 5 + 2j  # Γₙ(r)
 testR = [1.0, 0.5]    # Position vector r
-testK = (1,1,1)
+testK = (1,1)
 
 # Case 1: Given values and solve for the missing gamma_n
 missing_gamma_n = functions.function21_58(r=testR, k=testK)

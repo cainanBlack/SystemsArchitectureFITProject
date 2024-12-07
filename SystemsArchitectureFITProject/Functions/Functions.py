@@ -817,35 +817,47 @@ class Functions:
     # @param lambda_old (float): The old wavelength (optional if solving for lambda_old)
     # @return float: The calculated value of the missing variable
     @staticmethod
+<<<<<<< Updated upstream
     def function21_68(missing, r_new=None, r_old=None, lambda_new=None, lambda_old=None): #TODO NOTE REMOVE MISSING VALUE PLZ
         
         # Validate input
         if missing not in ['r_new', 'r_old', 'lambda_new', 'lambda_old']:
             raise ValueError("Invalid variable to solve for. Choose 'r_new', 'r_old', 'lambda_new', or 'lambda_old'.")
         
+=======
+    def function21_68(r_new=None, r_old=None, lambda_new=None, lambda_old=None):
+         
+>>>>>>> Stashed changes
         # Solve for r_new
-        if missing == 'r_new':
-            if r_old is None or lambda_new is None or lambda_old is None:
+        if r_new is None:
+            if r_old is not None or lambda_new is not None or lambda_old is not None:
+                return (lambda_new / lambda_old)**(6/5) * r_old
+            else:
                 raise ValueError("r_old, lambda_new, and lambda_old must be provided to solve for r_new.")
-            return (lambda_new / lambda_old)**(6/5) * r_old
         
         # Solve for r_old
-        elif missing == 'r_old':
-            if r_new is None or lambda_new is None or lambda_old is None:
+        elif r_old is None:
+            if r_new is not None or lambda_new is not None or lambda_old is not None:
+                return r_new / (lambda_new / lambda_old)**(6/5)
+            else:
                 raise ValueError("r_new, lambda_new, and lambda_old must be provided to solve for r_old.")
-            return r_new / (lambda_new / lambda_old)**(6/5)
         
         # Solve for lambda_new
-        elif missing == 'lambda_new':
-            if r_new is None or r_old is None or lambda_old is None:
+        elif lambda_new is None:
+            if r_new is not None or r_old is not None or lambda_old is not None:
+                return lambda_old * (r_new / r_old)**(5/6)
+            else:
                 raise ValueError("r_new, r_old, and lambda_old must be provided to solve for lambda_new.")
-            return lambda_old * (r_new / r_old)**(5/6)
         
         # Solve for lambda_old
-        elif missing == 'lambda_old':
-            if r_new is None or r_old is None or lambda_new is None:
+        elif lambda_old is None:
+            if r_new is not None or r_old is not None or not lambda_new is None:
+                return lambda_new / (r_new / r_old)**(5/6)
+            else:
                 raise ValueError("r_new, r_old, and lambda_new must be provided to solve for lambda_old.")
-            return lambda_new / (r_new / r_old)**(5/6)
+            
+        else:
+            raise ValueError("Invalid combination of missing variables")
 
     # Solves for the missing value (theta_0, lambda_value, or L) in the given equation.
     # @param theta_0 (float): The known value of θ₀ (must be in range of 0.1e-3 to 0.9e-12).
